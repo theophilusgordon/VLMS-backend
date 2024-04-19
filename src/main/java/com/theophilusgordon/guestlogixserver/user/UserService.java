@@ -15,19 +15,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
 
-    public void createUser(CreateUserRequest request) {
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setMiddleName(request.getMiddleName());
-        user.setLastName(request.getLastName());
-        user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
-        user.setProfilePhotoUrl(request.getProfilePhotoUrl());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(this.createRole(request.getRole()));
-        repository.save(user);
-    }
-
     public void updateUser(String id, UpdateUserRequest request) {
         var user = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
@@ -47,19 +34,15 @@ public class UserService {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        // check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
         }
-        // check if the two new passwords are the same
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
             throw new IllegalStateException("Password are not the same");
         }
 
-        // update the password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        // save the new password
         repository.save(user);
     }
 
@@ -94,14 +77,5 @@ public class UserService {
                 .company(user.getCompany())
                 .role(user.getRole())
                 .build();
-    }
-
-    private Role createRole(String value) {
-        for (Role role : Role.values()) {
-            if (role.name().equalsIgnoreCase(value)) {
-                return role;
-            }
-        }
-        throw new IllegalArgumentException("Invalid role: " + value);
     }
 }

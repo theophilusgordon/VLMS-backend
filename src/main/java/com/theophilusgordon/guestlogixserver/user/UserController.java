@@ -13,12 +13,6 @@ import java.security.Principal;
 public class UserController {
     private final UserService service;
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody CreateUserRequest request) {
-        service.createUser(request);
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
         service.updateUser(id, request);

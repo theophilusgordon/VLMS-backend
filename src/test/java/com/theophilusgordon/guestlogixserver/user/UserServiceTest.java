@@ -32,23 +32,7 @@ class UserServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void whenCreateUser_thenUserIsCreated() {
-        CreateUserRequest request = new CreateUserRequest(
-                "John",
-                "Doe",
-                "Smith",
-                "1234567890",
-                "john@example.com",
-                "http://example.com/profile.jpg",
-                "password",
-                "USER"
-        );
 
-        userService.createUser(request);
-
-        verify(userRepository, times(1)).save(any(User.class));
-    }
 
     @Test
     void whenUpdateUser_thenUserIsUpdated() {

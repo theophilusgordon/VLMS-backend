@@ -5,6 +5,7 @@ import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenType;
+import com.theophilusgordon.guestlogixserver.user.Role;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,11 +30,14 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
-                .firstName(request.getFirstname())
-                .lastName(request.getLastname())
+                .firstName(request.getFirstName())
+                .middleName(request.getMiddleName())
+                .lastName(request.getLastName())
                 .email(request.getEmail())
+                .phone(request.getPhone())
+                .profilePhotoUrl(request.getProfilePhotoUrl())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(this.createRole(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -112,5 +116,14 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+
+    private Role createRole(String value) {
+        for (Role role : Role.values()) {
+            if (role.name().equalsIgnoreCase(value)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("Invalid role: " + value);
     }
 }
