@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,6 +42,14 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
+
+    public String getFullName() {
+        return String.format("%s %s %s", firstName, middleName, lastName);
+    }
+
+    public String getInitials() {
+        return String.format("%s%s", firstName.charAt(0), lastName.charAt(0));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

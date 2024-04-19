@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.auth;
+package com.theophilusgordon.guestlogixserver.guest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,15 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+@AllArgsConstructor
+public class GuestRegisterRequest {
     private String firstName;
     private String middleName;
     private String lastName;
-    private String phone;
     private String email;
+    private String phone;
     private String profilePhotoUrl;
-    private String password;
-    private String role;
+    private String company;
 }
