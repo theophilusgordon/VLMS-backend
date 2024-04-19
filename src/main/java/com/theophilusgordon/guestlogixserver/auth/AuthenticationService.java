@@ -2,6 +2,7 @@ package com.theophilusgordon.guestlogixserver.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
+import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenType;
@@ -29,6 +30,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if(!PasswordValidator.isValid(request.getPassword()))
+            throw new BadRequestException("Password must contain at least one digit, " +
+                    "one uppercase letter, one lowercase letter, one special character " +
+                    "and must be at least 8 characters long.");
+
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .middleName(request.getMiddleName())
