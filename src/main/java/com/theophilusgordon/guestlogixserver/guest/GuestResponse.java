@@ -13,17 +13,17 @@ import lombok.NoArgsConstructor;
 public class GuestResponse {
     @JsonProperty("id")
     private String id;
-    @JsonProperty("first_name")
+    @JsonProperty("firstName")
     private String firstName;
-    @JsonProperty("middle_name")
+    @JsonProperty("middleName")
     private String middleName;
-    @JsonProperty("last_name")
+    @JsonProperty("lastName")
     private String lastName;
     @JsonProperty("email")
     private String email;
     @JsonProperty("phone")
     private String phone;
-    @JsonProperty("profile_photo_url")
+    @JsonProperty("profilePhotoUrl")
     private String profilePhotoUrl;
     @JsonProperty("company")
     private String company;

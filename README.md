@@ -39,7 +39,7 @@ Refer to the Swagger documentation for API endpoints and usage instructions.
 
 ## Documentation
 
-- [Swagger API Documentation](link-to-swagger-docs): View detailed documentation for the RESTful APIs.
+- [Swagger API Documentation](http://localhost:8080/swagger-ui/index.html): View detailed documentation for the RESTful APIs.
 
 ## License
 

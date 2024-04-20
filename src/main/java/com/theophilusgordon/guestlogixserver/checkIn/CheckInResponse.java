@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 public class CheckInResponse {
     @JsonProperty("id")
     private Integer id;
-    @JsonProperty("check_in_date_time")
+    @JsonProperty("checkInDateTime")
     private LocalDateTime checkInDateTime;
-    @JsonProperty("check_out_date_time")
+    @JsonProperty("checkOutDateTime")
     private LocalDateTime checkOutDateTime;
     private GuestResponse guest;
     private UserResponse host;
