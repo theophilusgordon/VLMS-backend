@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CheckInOutControllerTest {
+ class CheckInOutControllerTest {
 
     @InjectMocks
     private CheckInOutController checkInOutController;
@@ -23,7 +23,7 @@ public class CheckInOutControllerTest {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(checkInOutController).build();
     }

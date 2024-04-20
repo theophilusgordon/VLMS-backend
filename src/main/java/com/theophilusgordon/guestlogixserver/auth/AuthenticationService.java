@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if(repository.existsByEmail(request.getEmail()))
+            throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
+
         if(!PasswordValidator.isValid(request.getPassword()))
             throw new BadRequestException("Password must contain at least one digit, " +
                     "one uppercase letter, one lowercase letter, one special character " +

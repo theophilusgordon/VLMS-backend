@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.user;
 
+import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +16,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
 
-    public void updateUser(String id, UpdateUserRequest request) {
+    public UserResponse updateUser(String id, UpdateUserRequest request) {
         var user = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
         if(request.getFirstName() != null)
@@ -29,16 +30,19 @@ public class UserService {
         if(request.getProfilePhotoUrl() != null)
             user.setProfilePhotoUrl(request.getProfilePhotoUrl());
         repository.save(user);
+
+        return UserResponse.builder()
+                .user(toDto(user)).build();
     }
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalStateException("Wrong password");
+            throw new BadRequestException("Wrong password");
         }
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Password are not the same");
+            throw new BadRequestException("Password are not the same");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
