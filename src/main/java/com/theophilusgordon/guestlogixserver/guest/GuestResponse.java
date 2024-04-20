@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.user;
+package com.theophilusgordon.guestlogixserver.guest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class GuestResponse {
     @JsonProperty("id")
     private String id;
     @JsonProperty("first_name")
@@ -19,14 +19,12 @@ public class UserResponse {
     private String middleName;
     @JsonProperty("last_name")
     private String lastName;
-    @JsonProperty("phone")
-    private String phone;
     @JsonProperty("email")
     private String email;
+    @JsonProperty("phone")
+    private String phone;
     @JsonProperty("profile_photo_url")
     private String profilePhotoUrl;
     @JsonProperty("company")
     private String company;
-    @JsonProperty("role")
-    private Role role;
 }

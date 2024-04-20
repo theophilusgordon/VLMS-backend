@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkInOut;
+package com.theophilusgordon.guestlogixserver.checkIn;
 
 import com.theophilusgordon.guestlogixserver.guest.Guest;
 import com.theophilusgordon.guestlogixserver.user.User;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class CheckInOut {
+public class CheckIn {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,6 +24,6 @@ public class CheckInOut {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User host;
-    private LocalDateTime checkIn;
-    private LocalDateTime checkOut;
+    private LocalDateTime checkInDateTime;
+    private LocalDateTime checkOutDateTime;
 }

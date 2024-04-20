@@ -14,9 +14,8 @@ public class UserController {
     private final UserService service;
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
-        service.updateUser(id, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(service.updateUser(id, request));
     }
 
     @PatchMapping
@@ -34,12 +33,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable String id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable String id) {
         return ResponseEntity.ok(service.getUser(id));
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<UserDto>> getUsers() {
+    public ResponseEntity<Iterable<UserResponse>> getUsers() {
         return ResponseEntity.ok(service.getUsers());
     }
 

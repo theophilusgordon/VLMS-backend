@@ -31,8 +31,7 @@ public class UserService {
             user.setProfilePhotoUrl(request.getProfilePhotoUrl());
         repository.save(user);
 
-        return UserResponse.builder()
-                .user(toDto(user)).build();
+        return this.buildUserResponse(user);
     }
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
@@ -50,15 +49,15 @@ public class UserService {
         repository.save(user);
     }
 
-    public UserDto getUser(String id) {
+    public UserResponse getUser(String id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
-        return toDto(user);
+        return this.buildUserResponse(user);
     }
 
-    public Iterable<UserDto> getUsers() {
+    public Iterable<UserResponse> getUsers() {
         return repository.findAll().stream()
-                .map(this::toDto)
+                .map(this::buildUserResponse)
                 .toList();
     }
 
@@ -69,8 +68,8 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    private UserDto toDto(User user) {
-        return UserDto.builder()
+    private UserResponse buildUserResponse(User user){
+        return UserResponse.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
                 .middleName(user.getMiddleName())

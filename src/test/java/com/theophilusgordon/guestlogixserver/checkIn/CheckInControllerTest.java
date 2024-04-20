@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkInOut;
+package com.theophilusgordon.guestlogixserver.checkIn;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,20 +12,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
- class CheckInOutControllerTest {
+ class CheckInControllerTest {
 
     @InjectMocks
-    private CheckInOutController checkInOutController;
+    private CheckInController checkInController;
 
     @Mock
-    private CheckInOutService checkInOutService;
+    private CheckInService checkInService;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(checkInOutController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(checkInController).build();
     }
 
     @Test
@@ -34,23 +34,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         request.setGuestId("guestId");
         request.setHostId("hostId");
 
-        doNothing().when(checkInOutService).checkIn(any(CheckInRequest.class));
+        doNothing().when(checkInService).checkIn(any(CheckInRequest.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/check-in-out/check-in")
                         .content("{\"guestId\":\"guestId\", \"hostId\":\"hostId\"}")
                         .contentType("application/json"))
                 .andExpect(status().isOk());
 
-        verify(checkInOutService, times(1)).checkIn(any(CheckInRequest.class));
+        verify(checkInService, times(1)).checkIn(any(CheckInRequest.class));
     }
 
     @Test
     void testCheckOut() throws Exception {
-        doNothing().when(checkInOutService).checkOut(anyInt());
+        doNothing().when(checkInService).checkOut(anyInt());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/check-in-out/check-out/1"))
                 .andExpect(status().isOk());
 
-        verify(checkInOutService, times(1)).checkOut(anyInt());
+        verify(checkInService, times(1)).checkOut(anyInt());
     }
 }

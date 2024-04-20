@@ -41,7 +41,7 @@ class UserControllerTest {
                 "http://example.com/profile2.jpg"
         );
 
-        ResponseEntity<User> response = userController.updateUser(id, request);
+        ResponseEntity<UserResponse> response = userController.updateUser(id, request);
 
         verify(userService, times(1)).updateUser(id, request);
         assertEquals(200, response.getStatusCodeValue());
@@ -76,7 +76,7 @@ class UserControllerTest {
     @Test
     void whenGetUser_thenUserIsReturned() {
         String id = "mockId";
-        UserDto userDto = new UserDto(
+        UserResponse userDto = new UserResponse(
                 "mockId",
                 "John",
                 "Doe",
@@ -89,7 +89,7 @@ class UserControllerTest {
         );
         when(userService.getUser(id)).thenReturn(userDto);
 
-        ResponseEntity<UserDto> response = userController.getUser(id);
+        ResponseEntity<UserResponse> response = userController.getUser(id);
 
         verify(userService, times(1)).getUser(id);
         assertEquals(200, response.getStatusCodeValue());
@@ -98,10 +98,10 @@ class UserControllerTest {
 
     @Test
     void whenGetUsers_thenUsersAreReturned() {
-        Iterable<UserDto> users = new ArrayList<>();
+        Iterable<UserResponse> users = new ArrayList<>();
         when(userService.getUsers()).thenReturn(users);
 
-        ResponseEntity<Iterable<UserDto>> response = userController.getUsers();
+        ResponseEntity<Iterable<UserResponse>> response = userController.getUsers();
 
         verify(userService, times(1)).getUsers();
         assertEquals(200, response.getStatusCodeValue());

@@ -35,7 +35,7 @@ class GuestControllerTest {
                 "ghantech"
         );
 
-        ResponseEntity<Guest> response = guestController.registerGuest(request);
+        ResponseEntity<GuestResponse> response = guestController.registerGuest(request);
 
         verify(guestService, times(1)).registerGuest(request);
         assertEquals(200, response.getStatusCodeValue());
@@ -53,7 +53,7 @@ class GuestControllerTest {
                 "ghantech"
         );
 
-        ResponseEntity<Guest> response = guestController.updateGuest(id, request);
+        ResponseEntity<GuestResponse> response = guestController.updateGuest(id, request);
 
         verify(guestService, times(1)).updateGuest(id, request);
         assertEquals(200, response.getStatusCodeValue());
@@ -61,7 +61,7 @@ class GuestControllerTest {
 
     @Test
     void whenGetAllGuests_thenGuestsAreReturned() {
-        ResponseEntity<Iterable<Guest>> response = guestController.getAllGuests();
+        ResponseEntity<Iterable<GuestResponse>> response = guestController.getAllGuests();
 
         verify(guestService, times(1)).getAllGuests();
         assertEquals(200, response.getStatusCodeValue());
@@ -70,10 +70,10 @@ class GuestControllerTest {
     @Test
     void whenGetGuest_thenGuestIsReturned() {
         String id = "mockId";
-        Guest guest = new Guest();
+        GuestResponse guest = new GuestResponse();
         when(guestService.getGuest(id)).thenReturn(guest);
 
-        ResponseEntity<Guest> response = guestController.getGuest(id);
+        ResponseEntity<GuestResponse> response = guestController.getGuest(id);
 
         verify(guestService, times(1)).getGuest(id);
         assertEquals(200, response.getStatusCodeValue());

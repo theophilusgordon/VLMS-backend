@@ -11,24 +11,22 @@ public class GuestController {
     private final GuestService service;
 
     @PostMapping
-    public ResponseEntity<Guest> registerGuest(@RequestBody GuestRegisterRequest request) {
-        service.registerGuest(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<GuestResponse> registerGuest(@RequestBody GuestRegisterRequest request) {
+        return ResponseEntity.ok(service.registerGuest(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Guest> updateGuest(@PathVariable String id, @RequestBody GuestUpdateRequest request) {
-        service.updateGuest(id, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<GuestResponse> updateGuest(@PathVariable String id, @RequestBody GuestUpdateRequest request) {
+        return ResponseEntity.ok(service.updateGuest(id, request));
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<Guest>> getAllGuests() {
+    public ResponseEntity<Iterable<GuestResponse>> getAllGuests() {
         return ResponseEntity.ok(service.getAllGuests());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Guest> getGuest(@PathVariable String id) {
+    public ResponseEntity<GuestResponse> getGuest(@PathVariable String id) {
         return ResponseEntity.ok(service.getGuest(id));
     }
 

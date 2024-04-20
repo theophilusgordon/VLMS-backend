@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkInOut;
+package com.theophilusgordon.guestlogixserver.checkIn;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

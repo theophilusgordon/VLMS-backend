@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkInOut;
+package com.theophilusgordon.guestlogixserver.checkIn;
 
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.guest.Guest;
@@ -16,13 +16,13 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CheckInOutServiceTest {
+class CheckInServiceTest {
 
     @InjectMocks
-    private CheckInOutService checkInOutService;
+    private CheckInService checkInService;
 
     @Mock
-    private CheckInOutRepository checkInOutRepository;
+    private CheckInRepository checkInRepository;
 
     @Mock
     private GuestRepository guestRepository;
@@ -47,30 +47,30 @@ class CheckInOutServiceTest {
         when(guestRepository.findById(anyString())).thenReturn(Optional.of(guest));
         when(userRepository.findById(anyString())).thenReturn(Optional.of(host));
 
-        checkInOutService.checkIn(request);
+        checkInService.checkIn(request);
 
-        verify(checkInOutRepository, times(1)).save(any(CheckInOut.class));
+        verify(checkInRepository, times(1)).save(any(CheckIn.class));
     }
 
     @Test
     void testCheckOut() {
-        when(checkInOutRepository.findById(anyInt())).thenReturn(Optional.of(new CheckInOut()));
+        when(checkInRepository.findById(anyInt())).thenReturn(Optional.of(new CheckIn()));
 
-        checkInOutService.checkOut(1);
+        checkInService.checkOut(1);
 
-        verify(checkInOutRepository, times(1)).findById(anyInt());
+        verify(checkInRepository, times(1)).findById(anyInt());
     }
 
     @Test
     void testCheckOutNotFound() {
-        when(checkInOutRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(checkInRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         try {
-            checkInOutService.checkOut(1);
+            checkInService.checkOut(1);
         } catch (NotFoundException e) {
             // Expected exception
         }
 
-        verify(checkInOutRepository, times(1)).findById(anyInt());
+        verify(checkInRepository, times(1)).findById(anyInt());
     }
 }
