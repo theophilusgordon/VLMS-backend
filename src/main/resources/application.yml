@@ -18,8 +18,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: guestlogix.gordtex@gmail.com #${MAIL_USERNAME}
-    password: Cr3at1v3@ #${MAIL_PASSWORD}
+    username: #${MAIL_USERNAME}
+    password:  #${MAIL_PASSWORD}
     properties:
       mail:
         smtp:

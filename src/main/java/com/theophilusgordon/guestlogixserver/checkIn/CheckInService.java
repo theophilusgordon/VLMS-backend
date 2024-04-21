@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.checkIn;
 
+import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.guest.Guest;
 import com.theophilusgordon.guestlogixserver.guest.GuestRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -73,8 +75,12 @@ public class CheckInService {
     }
 
     public Iterable<CheckInResponse> getCheckInsByCheckInDate(String checkInDate) {
-//        TODO: validate date
-        LocalDateTime dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        LocalDateTime dateTime;
+        try {
+            dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss");
+        }
         var checkIns = checkInRepository.findByCheckInDateTime(dateTime);
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
@@ -82,9 +88,18 @@ public class CheckInService {
     }
 
     public Iterable<CheckInResponse> getCheckInsByPeriod(String start, String end) {
-//        TODO: validate dates
-        LocalDateTime startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        LocalDateTime endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        LocalDateTime startDateTime;
+        LocalDateTime endDateTime;
+        try {
+            startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss");
+        }
+
+        if (startDateTime.isAfter(endDateTime)) {
+            throw new BadRequestException("Start date cannot be after end date");
+        }
         var checkIns = checkInRepository.findByCheckInDateTimeBetween(startDateTime, endDateTime);
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost())).
@@ -95,9 +110,18 @@ public class CheckInService {
         if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
-//        TODO: validate dates
-        LocalDateTime startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        LocalDateTime endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        LocalDateTime startDateTime;
+        LocalDateTime endDateTime;
+        try {
+            startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss");
+        }
+
+        if (startDateTime.isAfter(endDateTime)) {
+            throw new BadRequestException("Start date cannot be after end date");
+        }
         var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, startDateTime, endDateTime);
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost())).
