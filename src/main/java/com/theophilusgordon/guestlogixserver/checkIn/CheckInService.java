@@ -53,20 +53,27 @@ public class CheckInService {
     }
 
     public Iterable<CheckInResponse> getCheckInsByGuest(String guestId) {
-        var checkIns = checkInRepository.findByGuestId(guestId);
+        if(!guestRepository.existsById(guestId))
+            throw new NotFoundException("Guest", guestId);
+
+        Iterable<CheckIn> checkIns = checkInRepository.findByGuestId(guestId);
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
                 .toList();
     }
 
     public Iterable<CheckInResponse> getCheckInsByHost(String hostId) {
-        var checkIns = checkInRepository.findByHostId(hostId);
+        if(!hostRepository.existsById(hostId))
+            throw new NotFoundException("Host", hostId);
+
+        Iterable<CheckIn> checkIns = checkInRepository.findByHostId(hostId);
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
                 .toList();
     }
 
     public Iterable<CheckInResponse> getCheckInsByCheckInDate(String checkInDate) {
+//        TODO: validate date
         LocalDateTime dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         var checkIns = checkInRepository.findByCheckInDateTime(dateTime);
         return StreamSupport.stream(checkIns.spliterator(), false)
@@ -75,6 +82,7 @@ public class CheckInService {
     }
 
     public Iterable<CheckInResponse> getCheckInsByPeriod(String start, String end) {
+//        TODO: validate dates
         LocalDateTime startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         LocalDateTime endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         var checkIns = checkInRepository.findByCheckInDateTimeBetween(startDateTime, endDateTime);
@@ -83,7 +91,11 @@ public class CheckInService {
                 toList();
     }
 
-    public Iterable<CheckInResponse> getCheckInsByHostPeriod(String hostId, String start, String end) {
+    public Iterable<CheckInResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
+        if(!hostRepository.existsById(hostId))
+            throw new NotFoundException("Host", hostId);
+
+//        TODO: validate dates
         LocalDateTime startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         LocalDateTime endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, startDateTime, endDateTime);

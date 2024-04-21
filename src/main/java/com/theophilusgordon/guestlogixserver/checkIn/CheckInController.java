@@ -53,6 +53,6 @@ public class CheckInController {
 
     @GetMapping("/host-period/{hostId}/{start}/{end}")
     public ResponseEntity<Iterable<CheckInResponse>> getCheckInsByHostPeriod(@PathVariable String hostId, @PathVariable String start, @PathVariable String end) {
-        return ResponseEntity.ok(checkInService.getCheckInsByHostPeriod(hostId, start, end));
+        return ResponseEntity.ok(checkInService.getCheckInsByHostAndPeriod(hostId, start, end));
     }
 }

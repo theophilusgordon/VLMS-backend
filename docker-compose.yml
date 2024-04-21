@@ -15,6 +15,18 @@ services:
       - guest-logix-network
     restart: unless-stopped
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - guest-logix-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
 networks:
   guest-logix-network:
     driver: bridge
