@@ -101,13 +101,15 @@ public class CheckInService {
             throw new NotFoundException("Host", hostId);
 
         Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
-        var checkIns = checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond());
+        var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, dates.getFirst(), dates.getSecond());
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost())).
                 toList();
     }
 
     private CheckInResponse buildCheckInResponse(CheckIn checkIn, Guest guest, User host) {
+        if(guest == null || host == null)
+            throw new BadRequestException("Guest and Host must be provided");
         return CheckInResponse.builder()
                 .id(checkIn.getId())
                 .checkInDateTime(checkIn.getCheckInDateTime())
