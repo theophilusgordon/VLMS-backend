@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.service;
+package com.theophilusgordon.guestlogixserver.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;

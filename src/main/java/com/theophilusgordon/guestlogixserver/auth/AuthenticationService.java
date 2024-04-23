@@ -3,7 +3,7 @@ package com.theophilusgordon.guestlogixserver.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
-import com.theophilusgordon.guestlogixserver.service.EmailService;
+import com.theophilusgordon.guestlogixserver.utils.EmailService;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenType;
@@ -14,14 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +54,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
-//        TODO: set app password for the email service and use it in place off MAIL password
-//        emailService.sendEmail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
+        emailService.sendEmail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
