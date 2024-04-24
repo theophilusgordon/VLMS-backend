@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkIn;
+package com.theophilusgordon.guestlogixserver.checkin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckInResponse {
+public class CheckinResponse {
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("checkInDateTime")

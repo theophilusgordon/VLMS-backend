@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkIn;
+package com.theophilusgordon.guestlogixserver.checkin;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,13 +12,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
- class CheckInControllerTest {
+ class CheckinControllerTest {
 
     @InjectMocks
-    private CheckInController checkInController;
+    private CheckinController checkInController;
 
     @Mock
-    private CheckInService checkInService;
+    private CheckinService checkinService;
 
     private MockMvc mockMvc;
 
@@ -30,27 +30,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     @Test
     void testCheckIn() throws Exception {
-        CheckInRequest request = new CheckInRequest();
+        CheckinRequest request = new CheckinRequest();
         request.setGuestId("guestId");
         request.setHostId("hostId");
 
-        doNothing().when(checkInService).checkIn(any(CheckInRequest.class));
+        doNothing().when(checkinService).checkIn(any(CheckinRequest.class));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/check-in-out/check-in")
                         .content("{\"guestId\":\"guestId\", \"hostId\":\"hostId\"}")
                         .contentType("application/json"))
                 .andExpect(status().isOk());
 
-        verify(checkInService, times(1)).checkIn(any(CheckInRequest.class));
+        verify(checkinService, times(1)).checkIn(any(CheckinRequest.class));
     }
 
     @Test
     void testCheckOut() throws Exception {
-        doNothing().when(checkInService).checkOut(anyInt());
+        doNothing().when(checkinService).checkOut(anyInt());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/check-in-out/check-out/1"))
                 .andExpect(status().isOk());
 
-        verify(checkInService, times(1)).checkOut(anyInt());
+        verify(checkinService, times(1)).checkOut(anyInt());
     }
 }

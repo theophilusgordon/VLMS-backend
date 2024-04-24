@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkIn;
+package com.theophilusgordon.guestlogixserver.checkin;
 
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CheckInServiceTest {
+class CheckinServiceTest {
 
     @InjectMocks
     private CheckInService checkInService;
 
     @Mock
-    private CheckInRepository checkInRepository;
+    private CheckinRepository checkInRepository;
 
     @Mock
     private GuestRepository guestRepository;
@@ -50,7 +50,7 @@ class CheckInServiceTest {
 
     @Test
     void testCheckIn() {
-        CheckInRequest request = new CheckInRequest();
+        CheckinRequest request = new CheckinRequest();
         request.setGuestId("guestId");
         request.setHostId("hostId");
 
@@ -62,7 +62,7 @@ class CheckInServiceTest {
 
         checkInService.checkIn(request);
 
-        verify(checkInRepository, times(1)).save(any(CheckIn.class));
+        verify(checkInRepository, times(1)).save(any(Checkin.class));
     }
 
     @Test

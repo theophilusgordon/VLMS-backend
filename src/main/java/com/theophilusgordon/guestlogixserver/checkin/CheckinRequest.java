@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkIn;
+package com.theophilusgordon.guestlogixserver.checkin;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckInRequest {
+public class CheckinRequest {
     private String guestId;
     private String hostId;
 }

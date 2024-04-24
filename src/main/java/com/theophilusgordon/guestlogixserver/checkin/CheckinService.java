@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkIn;
+package com.theophilusgordon.guestlogixserver.checkin;
 
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
@@ -19,13 +19,13 @@ import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
-public class CheckInService {
-    private final CheckInRepository checkInRepository;
+public class CheckinService {
+    private final CheckinRepository checkInRepository;
     private final GuestRepository guestRepository;
     private final UserRepository hostRepository;
 
-    public CheckInResponse checkIn(CheckInRequest request) {
-        var checkIn = new CheckIn();
+    public CheckinResponse checkIn(CheckinRequest request) {
+        var checkIn = new Checkin();
         checkIn.setCheckInDateTime(LocalDateTime.now());
         Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
         checkIn.setGuest(guest);
@@ -35,7 +35,7 @@ public class CheckInService {
         return this.buildCheckInResponse(checkIn, guest, host);
     }
 
-    public CheckInResponse checkOut(Integer id) {
+    public CheckinResponse checkOut(Integer id) {
         var checkIn = checkInRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("CheckInOut", String.valueOf(id)));
         checkIn.setCheckOutDateTime(LocalDateTime.now());
@@ -43,39 +43,39 @@ public class CheckInService {
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 
-    public Iterable<CheckInResponse> getCheckIns() {
+    public Iterable<CheckinResponse> getCheckIns() {
         var checkIns = checkInRepository.findAll();
         return checkIns.stream()
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost()))
                 .toList();
     }
 
-    public CheckInResponse getCheckIn(Integer id) {
+    public CheckinResponse getCheckIn(Integer id) {
         var checkIn = checkInRepository.findById(id).orElseThrow(() -> new NotFoundException("CheckInOut", String.valueOf(id)));
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 
-    public Iterable<CheckInResponse> getCheckInsByGuest(String guestId) {
+    public Iterable<CheckinResponse> getCheckInsByGuest(String guestId) {
         if(!guestRepository.existsById(guestId))
             throw new NotFoundException("Guest", guestId);
 
-        Iterable<CheckIn> checkIns = checkInRepository.findByGuestId(guestId);
+        Iterable<Checkin> checkIns = checkInRepository.findByGuestId(guestId);
         return StreamSupport.stream(checkIns.spliterator(), false)
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost()))
                 .toList();
     }
 
-    public Iterable<CheckInResponse> getCheckInsByHost(String hostId) {
+    public Iterable<CheckinResponse> getCheckInsByHost(String hostId) {
         if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
-        Iterable<CheckIn> checkIns = checkInRepository.findByHostId(hostId);
+        Iterable<Checkin> checkIns = checkInRepository.findByHostId(hostId);
         return StreamSupport.stream(checkIns.spliterator(), false)
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost()))
                 .toList();
     }
 
-    public Iterable<CheckInResponse> getCheckInsByCheckInDate(String checkInDate) {
+    public Iterable<CheckinResponse> getCheckInsByCheckInDate(String checkInDate) {
         LocalDateTime dateTime;
         try {
             dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -84,33 +84,33 @@ public class CheckInService {
         }
         var checkIns = checkInRepository.findByCheckInDateTime(dateTime);
         return StreamSupport.stream(checkIns.spliterator(), false)
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost()))
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost()))
                 .toList();
     }
 
-    public Iterable<CheckInResponse> getCheckInsByPeriod(String start, String end) {
+    public Iterable<CheckinResponse> getCheckInsByPeriod(String start, String end) {
         Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
         var checkIns = checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond());
         return StreamSupport.stream(checkIns.spliterator(), false)
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost())).
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost())).
                 toList();
     }
 
-    public Iterable<CheckInResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
+    public Iterable<CheckinResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
         if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
         Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
         var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, dates.getFirst(), dates.getSecond());
         return StreamSupport.stream(checkIns.spliterator(), false)
-                .map(checkIn -> this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost())).
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost())).
                 toList();
     }
 
-    private CheckInResponse buildCheckInResponse(CheckIn checkIn, Guest guest, User host) {
+    private CheckinResponse buildCheckInResponse(Checkin checkIn, Guest guest, User host) {
         if(guest == null || host == null)
             throw new BadRequestException("Guest and Host must be provided");
-        return CheckInResponse.builder()
+        return CheckinResponse.builder()
                 .id(checkIn.getId())
                 .checkInDateTime(checkIn.getCheckInDateTime())
                 .checkOutDateTime(checkIn.getCheckOutDateTime())
