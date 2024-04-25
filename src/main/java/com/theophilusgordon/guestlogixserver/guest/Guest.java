@@ -28,6 +28,9 @@ public class Guest {
     private String profilePhotoUrl;
     private String company;
 
+    @Lob
+    private byte[] qrCode;
+
     public String getFullName() {
         return String.format("%s %s %s", firstName, middleName, lastName);
     }

@@ -1,15 +1,33 @@
 package com.theophilusgordon.guestlogixserver.guest;
 
+import com.google.zxing.WriterException;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
+import com.theophilusgordon.guestlogixserver.exception.ServerErrorException;
+import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
+import com.theophilusgordon.guestlogixserver.utils.MailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
 public class GuestService {
     private final GuestRepository guestRepository;
+
+    private final QRCodeService qrCodeService;
+    private final MailService mailService;
+
+    public Guest findByQrCode(byte[] qrCode){
+        if(qrCode == null)
+            throw new BadRequestException("QR Code is required");
+
+        return guestRepository.findByQrCode(qrCode)
+            .orElseThrow(() -> new NotFoundException("Guest", "QR Code"));
+    }
 
     public GuestResponse registerGuest(GuestRegisterRequest request){
         if(guestRepository.existsByEmail(request.getEmail()))
@@ -25,6 +43,16 @@ public class GuestService {
             .company(request.getCompany())
             .build();
         guestRepository.save(guest);
+
+        try {
+            byte[] qrCode = this.createGuestQrCode(guest);
+            this.mailService.sendMailWithAttachment(guest.getEmail(),
+                    "Welcome to GuestLogix",
+                    "Welcome to GuestLogix, your QR Code is attached",
+                    qrCode);
+        } catch (WriterException | IOException | MessagingException e) {
+            throw new ServerErrorException("Failed to generate QR Code");
+        }
 
         return this.buildGuestResponse(guest);
     }
@@ -63,9 +91,15 @@ public class GuestService {
     }
 
     public void deleteGuest(@PathVariable String id){
-        guestRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Guest", id));
+        if(!guestRepository.existsById(id))
+            throw new NotFoundException("Guest", id);
         guestRepository.deleteById(id);
+    }
+    private byte[] createGuestQrCode(Guest guest) throws WriterException, IOException {
+        String barcodeText = guest.getId();
+        byte[] qrCode = qrCodeService.generateQRCodeImage(barcodeText);
+        guest.setQrCode(qrCode);
+        return qrCode;
     }
 
     private GuestResponse buildGuestResponse(Guest guest) {

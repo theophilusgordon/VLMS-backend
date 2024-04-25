@@ -3,7 +3,7 @@ package com.theophilusgordon.guestlogixserver.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
-import com.theophilusgordon.guestlogixserver.utils.EmailService;
+import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenType;
@@ -29,7 +29,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final EmailService emailService;
+    private final MailService mailService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         if(repository.existsByEmail(request.getEmail()))
@@ -54,7 +54,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
-        emailService.sendEmail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
+        mailService.sendMail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

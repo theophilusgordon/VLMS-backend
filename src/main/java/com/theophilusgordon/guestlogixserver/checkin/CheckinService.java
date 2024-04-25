@@ -24,6 +24,7 @@ public class CheckinService {
     private final GuestRepository guestRepository;
     private final UserRepository hostRepository;
 
+
     public CheckinResponse checkIn(CheckinRequest request) {
         var checkIn = new Checkin();
         checkIn.setCheckInDateTime(LocalDateTime.now());
