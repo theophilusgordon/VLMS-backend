@@ -1,7 +1,9 @@
 package com.theophilusgordon.guestlogixserver.user;
 
 import com.theophilusgordon.guestlogixserver.token.Token;
+import com.theophilusgordon.guestlogixserver.token.TokenType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,22 +31,22 @@ public class User implements UserDetails {
     )
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
-    @NotBlank(message = "First name is required")
     private String firstName;
     private String middleName;
-    @NotBlank(message = "Last name is required")
     private String lastName;
     private String phone;
-    @NotBlank(message = "Email is required")
     private String email;
     private String profilePhotoUrl;
-    @NotBlank(message = "Company is required")
     private String company;
-    @NotBlank(message = "Password is required")
+    private String department;
+    private String position;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;

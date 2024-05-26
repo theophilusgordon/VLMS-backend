@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.checkin;
 
+import com.google.zxing.WriterException;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.guest.Guest;
@@ -8,10 +9,12 @@ import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import com.theophilusgordon.guestlogixserver.user.UserResponse;
+import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -23,17 +26,19 @@ public class CheckinService {
     private final CheckinRepository checkInRepository;
     private final GuestRepository guestRepository;
     private final UserRepository hostRepository;
+    private final QRCodeService qrCodeService;
 
 
-    public CheckinResponse checkIn(CheckinRequest request) {
-        var checkIn = new Checkin();
-        checkIn.setCheckInDateTime(LocalDateTime.now());
+    public CheckinResponse checkIn(CheckinRequest request) throws IOException, WriterException {
+        var checkin = new Checkin();
+        checkin.setCheckInDateTime(LocalDateTime.now());
         Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
-        checkIn.setGuest(guest);
+        checkin.setGuest(guest);
         User host = hostRepository.findById(request.getHostId()).orElseThrow(() -> new NotFoundException("User", request.getHostId()));
-        checkIn.setHost(host);
-        checkInRepository.save(checkIn);
-        return this.buildCheckInResponse(checkIn, guest, host);
+        checkin.setHost(host);
+        checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
+        checkInRepository.save(checkin);
+        return this.buildCheckInResponse(checkin, guest, host);
     }
 
     public CheckinResponse checkOut(Integer id) {

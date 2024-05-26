@@ -3,6 +3,7 @@ package com.theophilusgordon.guestlogixserver.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
+import com.theophilusgordon.guestlogixserver.token.TokenService;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
@@ -30,30 +31,24 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
+    private final TokenService tokenService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         if(repository.existsByEmail(request.getEmail()))
             throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
 
-        if(!PasswordValidator.isValid(request.getPassword()))
-            throw new BadRequestException("Password must contain at least one digit, " +
-                    "one uppercase letter, one lowercase letter, one special character " +
-                    "and must be at least 8 characters long.");
-
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .middleName(request.getMiddleName())
                 .lastName(request.getLastName())
-                .email(request.getEmail())
                 .phone(request.getPhone())
                 .profilePhotoUrl(request.getProfilePhotoUrl())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(this.createRole(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
+        tokenService.saveUserToken(savedUser, jwtToken);
         mailService.sendMail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
@@ -73,22 +68,11 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+        tokenService.saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
-    }
-
-    private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
     }
 
     private void revokeAllUserTokens(User user) {
@@ -120,7 +104,7 @@ public class AuthenticationService {
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
-                saveUserToken(user, accessToken);
+                tokenService.saveUserToken(user, accessToken);
                 var authResponse = AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
@@ -130,12 +114,4 @@ public class AuthenticationService {
         }
     }
 
-    private Role createRole(String value) {
-        for (Role role : Role.values()) {
-            if (role.name().equalsIgnoreCase(value)) {
-                return role;
-            }
-        }
-        throw new IllegalArgumentException("Invalid role: " + value);
-    }
 }

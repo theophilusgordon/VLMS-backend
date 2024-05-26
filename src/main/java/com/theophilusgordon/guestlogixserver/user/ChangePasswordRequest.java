@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.user;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,10 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ChangePasswordRequest {
+    @NotBlank
     private String currentPassword;
+    @NotBlank
     private String newPassword;
+    @NotBlank
     private String confirmationPassword;
 }

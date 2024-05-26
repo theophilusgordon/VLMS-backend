@@ -1,8 +1,11 @@
 package com.theophilusgordon.guestlogixserver.checkin;
 
+import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 @RestController
@@ -12,7 +15,7 @@ public class CheckinController {
     private final CheckinService checkinService;
 
     @PostMapping
-    public ResponseEntity<CheckinResponse> checkIn(@RequestBody CheckinRequest request) {
+    public ResponseEntity<CheckinResponse> checkIn(@RequestBody CheckinRequest request) throws IOException, WriterException {
         return ResponseEntity.ok(checkinService.checkIn(request));
     }
 

@@ -2,6 +2,7 @@ package com.theophilusgordon.guestlogixserver.user;
 
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
+import com.theophilusgordon.guestlogixserver.utils.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,27 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+    private final MailService mailService;
+
+    public UserInviteResponse inviteUser(UserInviteRequest request) {
+        if(repository.existsByEmail(request.getEmail()))
+            throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
+
+        var user = User.builder()
+                .email(request.getEmail())
+                .company(request.getCompany())
+                .role(this.createRole(request.getRole()))
+                .build();
+        var savedUser = repository.save(user);
+        mailService.sendMail(user.getEmail(), "Welcome to GuestLogix", "You have been invited to GuestLogix");
+        return UserInviteResponse.builder()
+                .id(savedUser.getId())
+                .email(savedUser.getEmail())
+                .company(savedUser.getCompany())
+                .role(String.valueOf(savedUser.getRole()))
+                .status(Status.INVITED)
+                .build();
+    }
 
     public UserResponse updateUser(String id, UpdateUserRequest request) {
         var user = repository.findById(id)
@@ -66,6 +88,15 @@ public class UserService {
             throw new NotFoundException("User", id);
         }
         repository.deleteById(id);
+    }
+
+    private Role createRole(String value) {
+        for (Role role : Role.values()) {
+            if (role.name().equalsIgnoreCase(value)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("Invalid role: " + value);
     }
 
     private UserResponse buildUserResponse(User user){

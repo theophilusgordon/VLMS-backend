@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.checkin;
 
+import com.google.zxing.WriterException;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.guest.Guest;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -49,7 +51,7 @@ class CheckinServiceTest {
     }
 
     @Test
-    void testCheckIn() {
+    void testCheckIn() throws IOException, WriterException {
         CheckinRequest request = new CheckinRequest();
         request.setGuestId("guestId");
         request.setHostId("hostId");

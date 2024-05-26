@@ -26,4 +26,7 @@ public class Checkin {
     private User host;
     private LocalDateTime checkInDateTime;
     private LocalDateTime checkOutDateTime;
+    private byte[] qrCode;
+    private Boolean notificationSent;
+    private Boolean isExpected;
 }
