@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.auth;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    void whenRegister_thenServiceIsCalled() {
+    void whenRegister_thenServiceIsCalled() throws MessagingException {
         RegisterRequest registerRequest = new RegisterRequest();
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         when(service.register(registerRequest)).thenReturn(authenticationResponse);

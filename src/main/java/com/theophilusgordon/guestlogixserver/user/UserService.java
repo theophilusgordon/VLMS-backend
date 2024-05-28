@@ -3,6 +3,7 @@ package com.theophilusgordon.guestlogixserver.user;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +19,7 @@ public class UserService {
     private final UserRepository repository;
     private final MailService mailService;
 
-    public UserInviteResponse inviteUser(UserInviteRequest request) {
+    public UserInviteResponse inviteUser(UserInviteRequest request) throws MessagingException {
         if(repository.existsByEmail(request.getEmail()))
             throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
 
@@ -28,7 +29,13 @@ public class UserService {
                 .role(this.createRole(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
-        mailService.sendMail(user.getEmail(), "Welcome to GuestLogix", "You have been invited to GuestLogix");
+        mailService.sendMail(
+                user.getEmail(),
+                "Welcome to GuestLogix",
+                null,
+                true,
+                "http://localhost:8080/api/v1/users/register/" + savedUser.getId()
+        );
         return UserInviteResponse.builder()
                 .id(savedUser.getId())
                 .email(savedUser.getEmail())

@@ -11,6 +11,7 @@ import com.theophilusgordon.guestlogixserver.token.TokenType;
 import com.theophilusgordon.guestlogixserver.user.Role;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class AuthenticationService {
     private final MailService mailService;
     private final TokenService tokenService;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
         if(repository.existsByEmail(request.getEmail()))
             throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
 
@@ -49,7 +50,13 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         tokenService.saveUserToken(savedUser, jwtToken);
-        mailService.sendMail(user.getEmail(), "Welcome to GuestLogix", "You have successfully registered to GuestLogix");
+        mailService.sendMail(
+                user.getEmail(),
+                "Welcome to GuestLogix",
+                "You have successfully registered to GuestLogix",
+                false,
+                ""
+        );
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

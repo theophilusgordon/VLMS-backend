@@ -4,6 +4,7 @@ import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +54,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void whenRegister_thenUserIsCreated() {
+    void whenRegister_thenUserIsCreated() throws MessagingException {
         RegisterRequest request = new RegisterRequest("John",
                 "Doe",
                 "Smith",

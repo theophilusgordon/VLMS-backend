@@ -26,6 +26,8 @@ spring:
           auth: true
           starttls:
             enable: true
+        mime:
+          charset: UTF-8
 
 cloud:
   aws:
