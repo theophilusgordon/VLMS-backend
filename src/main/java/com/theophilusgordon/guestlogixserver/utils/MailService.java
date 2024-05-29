@@ -24,22 +24,40 @@ public class MailService {
     private String from;
 
     @Async
-    public void sendMail(String to, String subject, String username, Boolean isInvitationLink, String invitationLink) throws MessagingException {
+    public void sendInvitationMail(String to, String subject, String invitationLink) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-
-        mimeMessageHelper.setFrom(from);
-        mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
-
         Context context = new Context();
-        context.setVariable("subject", subject);
-        context.setVariable("isInvitationLink", isInvitationLink);
-        context.setVariable("invitationLink", invitationLink);
-        context.setVariable("username", username);
 
-        String htmlContent = templateEngine.process("mail-template", context);
-        mimeMessageHelper.setText(htmlContent, true);
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "invitation-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("invitationLink", invitationLink);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendSignupSuccessMail(String to, String subject, String username) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Context context = new Context();
+
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "signup-success-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("username", username);
 
         mailSender.send(mimeMessage);
     }
@@ -58,5 +76,22 @@ public class MailService {
         helper.addAttachment("QRCode.png", file);
 
         mailSender.send(message);
+    }
+
+    private void configureMimeMessageHelper(
+            MimeMessage mimeMessage,
+            String to,
+            String from,
+            String subject,
+            Context context,
+            String template
+    ) throws MessagingException {
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom(from);
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setSubject(subject);
+
+        String htmlContent = templateEngine.process(template, context);
+        mimeMessageHelper.setText(htmlContent, true);
     }
 }

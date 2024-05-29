@@ -29,11 +29,9 @@ public class UserService {
                 .role(this.createRole(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
-        mailService.sendMail(
+        mailService.sendInvitationMail(
                 user.getEmail(),
-                "Welcome to GuestLogix",
-                null,
-                true,
+                "Invitation to Join Guest Logix as a Host",
                 "http://localhost:8080/api/v1/users/register/" + savedUser.getId()
         );
         return UserInviteResponse.builder()

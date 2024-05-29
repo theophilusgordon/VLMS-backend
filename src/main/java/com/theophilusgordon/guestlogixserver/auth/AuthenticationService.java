@@ -5,10 +5,7 @@ import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.token.TokenService;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
-import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
-import com.theophilusgordon.guestlogixserver.token.TokenType;
-import com.theophilusgordon.guestlogixserver.user.Role;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import jakarta.mail.MessagingException;
@@ -35,8 +32,8 @@ public class AuthenticationService {
     private final TokenService tokenService;
 
     public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
-        if(repository.existsByEmail(request.getEmail()))
-            throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
+        if(!repository.existsByEmail(request.getEmail()))
+            throw new BadRequestException(String.format("User with email: %s not found. Please contact the administrator.", request.getEmail()));
 
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -50,12 +47,10 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         tokenService.saveUserToken(savedUser, jwtToken);
-        mailService.sendMail(
+        mailService.sendSignupSuccessMail(
                 user.getEmail(),
                 "Welcome to GuestLogix",
-                "You have successfully registered to GuestLogix",
-                false,
-                ""
+                user.getFullName()
         );
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)

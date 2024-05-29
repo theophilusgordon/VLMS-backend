@@ -1,13 +1,17 @@
-FROM adoptium/openjdk:17-slim AS build
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
+
+RUN apt-get update && \
+    apt-get install -y maven && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY pom.xml .
 COPY src ./src
 
 RUN mvn clean package
 
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 LABEL maintainer="gordonfiifi@gmail.com"
 

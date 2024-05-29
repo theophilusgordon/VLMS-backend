@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Welcome to Guest logix! Your Account Setup is Complete</title>
+</head>
+<body>
+<header>
+    <h3 th:text="${subject}">Welcome to ViLog! Your Account Setup is Complete</h3>
+</header>
+<p>Dear User,</p>
+
+<p>
+    Congratulations and welcome to Guest Logix! We are delighted to inform you that
+    your account setup as a Host has been successfully completed.
+</p>
+<p>
+    You can now start using ViLog to manage and track visitors seamlessly. Below are
+    your account details and some quick tips to get you started:
+</p>
+
+<h4>Account Details:</h4>
+<ul>
+    <li><span style="font-weight: bold">Email</span>: ${email}</li>
+    <li><span style="font-weight: bold">Role</span>: Host</li>
+    <li><span style="font-weight: bold">Login URL</span>: ${loginUrl}</li>
+</ul>
+<div>
+    <h4>Features you will enjoy as a Host.</h4>
+    <ul>
+        <li><span style="font-weight: bold">Real-time Notifications</span>: Get notified when your guests arrive.</li>
+        <li><span style="font-weight: bold">Live Visitor Tracking</span>: Monitor visitor activities in real-time.</li>
+        <li><span style="font-weight: bold">Comprehensive Dashboard</span>: Access detailed visitor statistics and trends.</li>
+        <li><span style="font-weight: bold">Custom Reports</span>: Generate and export custom reports.</li>
+    </ul>
+
+   <h4>Getting Started:</h4>
+    <ul>
+        <li>Log in to your account using the login URL provided above.</li>
+        <li>Set up your profile and customize your account settings.</li>
+        <li>Receive your first visitor and start tracking their activities.</li>
+        <li>Explore the dashboard and generate custom reports.</li>
+    </ul>
+</div>
+    <footer>
+        <p>
+            For any assistance or queries, please feel free to contact our support team at
+            <a href="https://www.linkedin.com/in/theophilusgordon">support@gordtex.org</a>
+        </p>
+        <p>Best regards,</p>
+        <p>The Guest Logix Team</p>
+        <p>GordTex Limited</p>
+        <p>P. O. Box TG2024</p>
+        <p>Phone: +233 (0) 507200245</p>
+        <a href="https://www.linkedin.com/in/theophilusgordon">www.gordtex.com</a>
+    </footer>
+</body>
+</html>
