@@ -43,6 +43,16 @@ public class UserService {
                 .build();
     }
 
+    public void forgotPassword(String email) throws MessagingException {
+        var user = repository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User", email));
+        mailService.sendForgotPasswordMail(
+                user.getEmail(),
+                "Reset Password",
+                "http://localhost:8080/api/v1/users/reset-password/" + user.getId()
+        );
+    }
+
     public UserResponse updateUser(String id, UpdateUserRequest request) {
         var user = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));

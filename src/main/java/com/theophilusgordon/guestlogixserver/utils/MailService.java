@@ -62,6 +62,25 @@ public class MailService {
         mailSender.send(mimeMessage);
     }
 
+    public void sendForgotPasswordMail(String to, String subject, String resetPasswordUrl) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Context context = new Context();
+
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "forgot-password-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("resetPasswordUrl", resetPasswordUrl);
+
+        mailSender.send(mimeMessage);
+    }
+
 
     public void sendMailWithAttachment(String to, String subject, String body, byte[] attachment) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
