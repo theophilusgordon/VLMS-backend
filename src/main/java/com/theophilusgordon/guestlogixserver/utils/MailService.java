@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.utils;
 
+import com.theophilusgordon.guestlogixserver.guest.Guest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class MailService {
         mailSender.send(mimeMessage);
     }
 
+    @Async
     public void sendSignupSuccessMail(String to, String subject, String username) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
@@ -62,7 +64,10 @@ public class MailService {
         mailSender.send(mimeMessage);
     }
 
-    public void sendForgotPasswordMail(String to, String subject, String resetPasswordUrl) throws MessagingException {
+    public void sendForgotPasswordMail(String to,
+                                       String subject,
+                                       String resetPasswordUrl
+    ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
 
@@ -81,20 +86,99 @@ public class MailService {
         mailSender.send(mimeMessage);
     }
 
+    @Async
+    public void sendPasswordResetSuccessMail(String to,
+                                             String subject,
+                                             String username
+    ) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Context context = new Context();
+
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "password-reset-success-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("username", username);
+
+        mailSender.send(mimeMessage);
+    }
+
+    @Async
+    public void sendCheckinNotificationMail(String to,
+                                            String subject,
+                                            String hostname,
+                                            Guest guest,
+                                            String checkinTime
+    ) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Context context = new Context();
+
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "checkin-notification-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("guest", guest);
+        context.setVariable("hostname", hostname);
+        context.setVariable("checkinTime", checkinTime);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendCheckinSuccessMail (
+            String to,
+            String subject,
+            String guestname
+    ) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        Context context = new Context();
+
+        configureMimeMessageHelper(
+                mimeMessage,
+                to,
+                from,
+                subject,
+                context,
+                "guest-checkin-success-mail-template"
+        );
+
+        context.setVariable("subject", subject);
+        context.setVariable("guestname", guestname);
+
+        mailSender.send(mimeMessage);
+    }
+
 
     public void sendMailWithAttachment(String to, String subject, String body, byte[] attachment) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
-        helper.setFrom(from);
-        helper.setTo(to);
-        helper.setSubject(subject);
-        helper.setText(body);
+        mimeMessageHelper.setFrom(from);
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setSubject(subject);
+        mimeMessageHelper.setText(body);
+
+        Context context = new Context();
+        context.setVariable("subject", subject);
+
+        String htmlContent = templateEngine.process("guest-checkin-success", context);
+        mimeMessageHelper.setText(htmlContent, true);
 
         ByteArrayResource file = new ByteArrayResource(attachment);
-        helper.addAttachment("QRCode.png", file);
+        mimeMessageHelper.addAttachment("QRCode.png", file);
 
-        mailSender.send(message);
+        mailSender.send(mimeMessage);
     }
 
     private void configureMimeMessageHelper(

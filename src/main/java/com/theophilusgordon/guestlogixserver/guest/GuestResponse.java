@@ -19,6 +19,8 @@ public class GuestResponse {
     private String middleName;
     @JsonProperty("lastName")
     private String lastName;
+    @JsonProperty
+    private String fullName;
     @JsonProperty("email")
     private String email;
     @JsonProperty("phone")

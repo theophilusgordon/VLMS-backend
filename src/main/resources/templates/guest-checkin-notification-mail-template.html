@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title th:text="${subject}">Your Guest Has Arrived</title>
+</head>
+<body>
+    <header>
+        <h3 th:text="${subject}">Your Guest Has Arrived</h3>
+    </header>
+    <p>Dear <span th:text="${hostname}">User</span>,</p>
+
+    <p>
+        We are pleased to inform you that your guest, <span th:text="${guest.getFullName()}"></span>,
+        has just checked in to see you.
+    </p>
+    <h4>Guest Details:</h4>
+    <ul>
+        <li><span style="font-weight: bold">Name</span>: <span th:text="${guest.getFullName()}"></span></li>
+        <li><span style="font-weight: bold">Phone</span>: <span th:text="${guest.getPhone()}"></span></li>
+        <li><span style="font-weight: bold">Company</span>: <span th:text="${guest.getCompany()}"></span></li>
+        <li><span style="font-weight: bold">Check-in Time</span>: <span th:text="${checkinTime}"></span></li>
+    </ul>
+    <p>
+        Please proceed to the reception area to welcome your guest. If you need any assistance or
+        have any special instructions for our team, feel free to let us know.
+    </p>
+
+    <h4>Next Steps:</h4>
+    <ol>
+        <li>
+            <span style="font-weight: bold">Meet Your Guest:</span>Head to the reception area to greet
+            <span th:text="${guest.getFullName()}"></span>
+        </li>
+        <li>
+            <span style="font-weight: bold">Check-out Process:</span>Once the meeting is over, ensure that
+            the guest checks out to complete the visit record.
+        </li>
+    </ol>
+
+    <p>
+        We hope you have a productive meeting. Thank you for using Guest Logix to manage your visitors.
+    </p>
+    <footer>
+        <p>
+            For any assistance or queries, please feel free to contact our support team at
+            <a href="https://www.linkedin.com/in/theophilusgordon">support@gordtex.org</a>
+        </p>
+        <p>Best regards,</p>
+        <p>The Guest Logix Team</p>
+        <p>GordTex Limited</p>
+        <p>P. O. Box TG2024</p>
+        <p>Phone: +233 (0) 507200245</p>
+        <a href="https://www.linkedin.com/in/theophilusgordon">www.gordtex.com</a>
+    </footer>
+</body>
+</html>
