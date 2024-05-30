@@ -1,6 +1,7 @@
 package com.theophilusgordon.guestlogixserver.checkin;
 
 import com.google.zxing.WriterException;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class CheckinController {
     private final CheckinService checkinService;
 
     @PostMapping
-    public ResponseEntity<CheckinResponse> checkIn(@RequestBody CheckinRequest request) throws IOException, WriterException {
+    public ResponseEntity<CheckinResponse> checkIn(@RequestBody CheckinRequest request) throws IOException, WriterException, MessagingException {
         return ResponseEntity.ok(checkinService.checkIn(request));
     }
 
