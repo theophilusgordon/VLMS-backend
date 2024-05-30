@@ -29,9 +29,4 @@ public class GuestController {
     public ResponseEntity<GuestResponse> getGuest(@PathVariable String id) {
         return ResponseEntity.ok(service.getGuest(id));
     }
-
-    @DeleteMapping("/{id}")
-    public void deleteGuest(@PathVariable String id) {
-        service.deleteGuest(id);
-    }
 }

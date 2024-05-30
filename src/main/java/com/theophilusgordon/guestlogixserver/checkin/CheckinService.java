@@ -9,7 +9,9 @@ import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import com.theophilusgordon.guestlogixserver.user.UserResponse;
+import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -27,9 +29,10 @@ public class CheckinService {
     private final GuestRepository guestRepository;
     private final UserRepository hostRepository;
     private final QRCodeService qrCodeService;
+    private final MailService mailService;
 
 
-    public CheckinResponse checkIn(CheckinRequest request) throws IOException, WriterException {
+    public CheckinResponse checkIn(CheckinRequest request) throws IOException, WriterException, MessagingException {
         var checkin = new Checkin();
         checkin.setCheckInDateTime(LocalDateTime.now());
         Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
@@ -38,6 +41,22 @@ public class CheckinService {
         checkin.setHost(host);
         checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
         checkInRepository.save(checkin);
+
+        mailService.sendCheckinSuccessMail(
+                guest.getEmail(),
+                "Successful Check-In at GordTex - Your QR Code for Future Visits",
+                guest.getFullName(),
+                checkin.getQrCode()
+        );
+
+        mailService.sendCheckinNotificationMail(
+                host.getEmail(),
+                "Your Guest Has Arrived",
+                host.getFullName(),
+                guest,
+                checkin.getCheckInDateTime()
+        );
+
         return this.buildCheckInResponse(checkin, guest, host);
     }
 

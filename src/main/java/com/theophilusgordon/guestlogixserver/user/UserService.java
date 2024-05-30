@@ -32,7 +32,7 @@ public class UserService {
         mailService.sendInvitationMail(
                 user.getEmail(),
                 "Invitation to Join Guest Logix as a Host",
-                "http://localhost:8080/api/v1/users/register/" + savedUser.getId()
+                savedUser.getId()
         );
         return UserInviteResponse.builder()
                 .id(savedUser.getId())
@@ -48,8 +48,25 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User", email));
         mailService.sendForgotPasswordMail(
                 user.getEmail(),
-                "Reset Password",
-                "http://localhost:8080/api/v1/users/reset-password/" + user.getId()
+                "Password Reset Request for Your Guest Logix Account",
+                user.getId()
+        );
+    }
+
+    public void resetPassword(String id, ResetPasswordRequest request) throws MessagingException {
+        var user = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User", id));
+
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new BadRequestException("Passwords do not match");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        repository.save(user);
+        mailService.sendPasswordResetSuccessMail(
+                user.getEmail(),
+                "Password Reset Successful",
+                user.getFullName()
         );
     }
 
@@ -70,6 +87,7 @@ public class UserService {
 
         return this.buildUserResponse(user);
     }
+
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();

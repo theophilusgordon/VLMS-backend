@@ -25,6 +25,12 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("/reset-password/{id}")
+    public ResponseEntity<?> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) throws MessagingException {
+        userService.resetPassword(id, request);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));

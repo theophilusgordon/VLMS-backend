@@ -6,13 +6,14 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import java.time.LocalDateTime;
 
 
 @Service
@@ -24,8 +25,11 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String from;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
     @Async
-    public void sendInvitationMail(String to, String subject, String invitationLink) throws MessagingException {
+    public void sendInvitationMail(String to, String subject, String userId) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
 
@@ -38,8 +42,10 @@ public class MailService {
                 "invitation-mail-template"
         );
 
+        String invitationUrl = frontendUrl + "/register/" + userId;
+
         context.setVariable("subject", subject);
-        context.setVariable("invitationLink", invitationLink);
+        context.setVariable("invitationUrl", invitationUrl);
 
         mailSender.send(mimeMessage);
     }
@@ -66,7 +72,7 @@ public class MailService {
 
     public void sendForgotPasswordMail(String to,
                                        String subject,
-                                       String resetPasswordUrl
+                                       String userId
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
@@ -79,6 +85,8 @@ public class MailService {
                 context,
                 "forgot-password-mail-template"
         );
+
+        String resetPasswordUrl = frontendUrl + "/reset-password/" + userId;
 
         context.setVariable("subject", subject);
         context.setVariable("resetPasswordUrl", resetPasswordUrl);
@@ -114,7 +122,7 @@ public class MailService {
                                             String subject,
                                             String hostname,
                                             Guest guest,
-                                            String checkinTime
+                                            LocalDateTime checkinTime
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         Context context = new Context();
@@ -136,31 +144,11 @@ public class MailService {
         mailSender.send(mimeMessage);
     }
 
-    public void sendCheckinSuccessMail (
-            String to,
-            String subject,
-            String guestname
+    public void sendCheckinSuccessMail(String to,
+                                       String subject,
+                                       String body,
+                                       byte[] attachment
     ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
-
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "guest-checkin-success-mail-template"
-        );
-
-        context.setVariable("subject", subject);
-        context.setVariable("guestname", guestname);
-
-        mailSender.send(mimeMessage);
-    }
-
-
-    public void sendMailWithAttachment(String to, String subject, String body, byte[] attachment) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
@@ -172,7 +160,7 @@ public class MailService {
         Context context = new Context();
         context.setVariable("subject", subject);
 
-        String htmlContent = templateEngine.process("guest-checkin-success", context);
+        String htmlContent = templateEngine.process("guest-checkin-success-mail-template", context);
         mimeMessageHelper.setText(htmlContent, true);
 
         ByteArrayResource file = new ByteArrayResource(attachment);
