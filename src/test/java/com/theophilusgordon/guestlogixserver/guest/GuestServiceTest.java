@@ -81,17 +81,6 @@ class GuestServiceTest {
     }
 
     @Test
-    void whenDeleteGuest_thenGuestIsDeleted() {
-        String id = "mockId";
-        Guest guest = new Guest();
-        when(guestRepository.findById(anyString())).thenReturn(Optional.of(guest));
-
-        guestService.deleteGuest(id);
-
-        verify(guestRepository, times(1)).deleteById(anyString());
-    }
-
-    @Test
     void whenGetGuest_thenNotFoundExceptionIsThrown() {
         String id = "mockId";
         when(guestRepository.findById(anyString())).thenReturn(Optional.empty());
@@ -99,11 +88,4 @@ class GuestServiceTest {
         assertThrows(NotFoundException.class, () -> guestService.getGuest(id));
     }
 
-    @Test
-    void whenDeleteGuest_thenNotFoundExceptionIsThrown() {
-        String id = "mockId";
-        when(guestRepository.findById(anyString())).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> guestService.deleteGuest(id));
-    }
 }

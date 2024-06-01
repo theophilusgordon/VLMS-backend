@@ -7,6 +7,7 @@ import com.theophilusgordon.guestlogixserver.guest.Guest;
 import com.theophilusgordon.guestlogixserver.guest.GuestRepository;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -51,7 +52,7 @@ class CheckinServiceTest {
     }
 
     @Test
-    void testCheckIn() throws IOException, WriterException {
+    void testCheckIn() throws IOException, WriterException, MessagingException {
         CheckinRequest request = new CheckinRequest();
         request.setGuestId("guestId");
         request.setHostId("hostId");

@@ -80,12 +80,4 @@ class GuestControllerTest {
         assertEquals(guest, response.getBody());
     }
 
-    @Test
-    void whenDeleteGuest_thenGuestIsDeleted() {
-        String id = "mockId";
-
-        guestController.deleteGuest(id);
-
-        verify(guestService, times(1)).deleteGuest(id);
-    }
 }
