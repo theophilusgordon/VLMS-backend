@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.guestlogixserver.config.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.token.TokenService;
+import com.theophilusgordon.guestlogixserver.user.Status;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import com.theophilusgordon.guestlogixserver.user.User;
@@ -32,8 +33,11 @@ public class AuthenticationService {
     private final TokenService tokenService;
 
     public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
-        if(!repository.existsByEmail(request.getEmail()))
-            throw new BadRequestException(String.format("User with email: %s not found. Please contact the administrator.", request.getEmail()));
+        User invitedUser = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException(String.format("User with email: %s not found. You need to be invited by the administrator to register.", request.getEmail())));
+
+        if(invitedUser.getStatus() != Status.INVITED)
+            throw new BadRequestException(String.format("User with email: %s is not is already registered.", request.getEmail()));
 
         var user = User.builder()
                 .firstName(request.getFirstName())
@@ -58,24 +62,36 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    try {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        tokenService.saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .build();
+    } catch (BadRequestException e) {
+        throw new BadRequestException("Invalid email or password");
     }
+
+    var user = repository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new BadRequestException("User not found"));
+
+    if(user.getStatus() != Status.ACTIVE)
+        throw new BadRequestException("User is not active");
+
+    revokeAllUserTokens(user);
+
+    var jwtToken = jwtService.generateToken(user);
+    var refreshToken = jwtService.generateRefreshToken(user);
+
+    tokenService.saveUserToken(user, jwtToken);
+
+    return AuthenticationResponse.builder()
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .build();
+}
 
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
