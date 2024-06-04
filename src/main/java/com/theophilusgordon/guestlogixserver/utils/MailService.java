@@ -146,7 +146,7 @@ public class MailService {
 
     public void sendCheckinSuccessMail(String to,
                                        String subject,
-                                       String body,
+                                       String guestName,
                                        byte[] attachment
     ) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -155,10 +155,10 @@ public class MailService {
         mimeMessageHelper.setFrom(from);
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(subject);
-        mimeMessageHelper.setText(body);
 
         Context context = new Context();
         context.setVariable("subject", subject);
+        context.setVariable("guestName", guestName);
 
         String htmlContent = templateEngine.process("guest-checkin-success-mail-template", context);
         mimeMessageHelper.setText(htmlContent, true);

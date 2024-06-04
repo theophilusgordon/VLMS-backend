@@ -25,7 +25,6 @@ public class UserService {
 
         var user = User.builder()
                 .email(request.getEmail())
-                .company(request.getCompany())
                 .role(this.createRole(request.getRole()))
                 .build();
         var savedUser = repository.save(user);
@@ -37,7 +36,6 @@ public class UserService {
         return UserInviteResponse.builder()
                 .id(savedUser.getId())
                 .email(savedUser.getEmail())
-                .company(savedUser.getCompany())
                 .role(String.valueOf(savedUser.getRole()))
                 .status(Status.INVITED)
                 .build();
@@ -141,7 +139,7 @@ public class UserService {
                 .phone(user.getPhone())
                 .email(user.getEmail())
                 .profilePhotoUrl(user.getProfilePhotoUrl())
-                .company(user.getCompany())
+                .department(user.getDepartment())
                 .role(user.getRole())
                 .build();
     }

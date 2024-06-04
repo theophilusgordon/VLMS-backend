@@ -1,6 +1,7 @@
 package com.theophilusgordon.guestlogixserver.config;
 
 import com.theophilusgordon.guestlogixserver.user.Role;
+import com.theophilusgordon.guestlogixserver.user.Status;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,10 @@ public class DatabaseSeeder {
                 admin.setEmail(adminEmail);
                 admin.setFirstName("Theophilus");
                 admin.setLastName("Gordon");
-                admin.setCompany("GordTex");
+                admin.setDepartment("Some Department");
                 admin.setPassword(passwordEncoder.encode("adminPassword@2024"));
                 admin.setRole(Role.ADMIN);
+                admin.setStatus(Status.ACTIVE);
                 userRepository.save(admin);
             }
         };

@@ -25,8 +25,8 @@ public class UserResponse {
     private String email;
     @JsonProperty("profilePhotoUrl")
     private String profilePhotoUrl;
-    @JsonProperty("company")
-    private String company;
+    @JsonProperty("department")
+    private String department;
     @JsonProperty("role")
     private Role role;
 }

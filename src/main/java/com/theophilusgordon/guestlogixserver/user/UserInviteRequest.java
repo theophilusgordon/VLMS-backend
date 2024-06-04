@@ -13,8 +13,6 @@ public class UserInviteRequest {
     @NotBlank(message = "Email is rewuired")
     @Email
     private String email;
-    @NotBlank(message = "Company is required")
-    private String company;
     @NotBlank(message = "Role is required")
     private String role;
 }

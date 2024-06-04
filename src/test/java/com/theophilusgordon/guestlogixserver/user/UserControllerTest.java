@@ -67,7 +67,7 @@ class UserControllerTest {
         UsernamePasswordAuthenticationToken authenticationToken = mock(UsernamePasswordAuthenticationToken.class);
         when(authenticationToken.getPrincipal()).thenReturn(user);
 
-        ResponseEntity<User> response = userController.getConnectedUser(authenticationToken);
+        ResponseEntity<UserResponse> response = userController.getConnectedUser(authenticationToken);
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(user, response.getBody());

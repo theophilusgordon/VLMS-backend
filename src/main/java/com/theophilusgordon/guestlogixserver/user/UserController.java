@@ -46,8 +46,10 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> getConnectedUser(Principal connectedUser) {
-        return ResponseEntity.ok((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal());
+    public ResponseEntity<UserResponse> getConnectedUser(Principal connectedUser) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        UserResponse userResponse = this.convertUserToUserResponse(user);
+        return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("/{id}")
@@ -64,5 +66,18 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
+    }
+
+    private UserResponse convertUserToUserResponse(User user) {
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setMiddleName(user.getMiddleName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setPhone(user.getPhone());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setProfilePhotoUrl(user.getProfilePhotoUrl());
+        userResponse.setRole(user.getRole());
+        return userResponse;
     }
 }
