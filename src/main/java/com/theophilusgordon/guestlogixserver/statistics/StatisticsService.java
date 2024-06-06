@@ -1,6 +1,8 @@
-package com.theophilusgordon.guestlogixserver.dashboard;
+package com.theophilusgordon.guestlogixserver.statistics;
 
+import com.theophilusgordon.guestlogixserver.checkin.Checkin;
 import com.theophilusgordon.guestlogixserver.checkin.CheckinRepository;
+import com.theophilusgordon.guestlogixserver.checkin.CheckinResponse;
 import com.theophilusgordon.guestlogixserver.guest.GuestRepository;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +14,12 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class DashboardService {
+public class StatisticsService {
     private final CheckinRepository checkinRepository;
     private final UserRepository hostRepository;
     private final GuestRepository guestRepository;
 
-    public DashboardStatisticsResponse getStatistics() {
+    public StatisticsResponse getStatistics() {
         long totalHosts = hostRepository.count();
         long totalGuests = guestRepository.count();
         long currentGuests = checkinRepository.countByCheckInDateTimeIsNotNullAndCheckOutDateTimeIsNull();
@@ -37,7 +39,7 @@ public class DashboardService {
         double averageCheckinsPerWeek = (double) totalCheckins / 52;
         double averageCheckinsPerMonth = (double) totalCheckins / 12;
 
-        return DashboardStatisticsResponse.builder()
+        return StatisticsResponse.builder()
                 .totalHosts(totalHosts)
                 .totalGuests(totalGuests)
                 .currentGuests(currentGuests)
@@ -52,5 +54,4 @@ public class DashboardService {
                 .averageCheckinsPerYear((double) totalCheckins)
                 .build();
     }
-
 }

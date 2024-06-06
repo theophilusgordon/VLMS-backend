@@ -132,6 +132,13 @@ public class CheckinService {
                 toList();
     }
 
+    public Iterable<CheckinResponse> getCurrentGuests() {
+        var checkIns = checkInRepository.findCurrentGuests();
+        return StreamSupport.stream(checkIns.spliterator(), false)
+                .map(checkin -> this.buildCheckInResponse(checkin, checkin.getGuest(), checkin.getHost()))
+                .toList();
+    }
+
     private CheckinResponse buildCheckInResponse(Checkin checkIn, Guest guest, User host) {
         if(guest == null || host == null)
             throw new BadRequestException("Guest and Host must be provided");

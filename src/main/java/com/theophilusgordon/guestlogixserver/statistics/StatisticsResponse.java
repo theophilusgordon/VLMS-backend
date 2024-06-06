@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.dashboard;
+package com.theophilusgordon.guestlogixserver.statistics;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DashboardStatisticsResponse {
+public class StatisticsResponse {
     private long totalHosts;
     private long totalGuests;
     private long currentGuests;

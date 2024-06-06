@@ -19,6 +19,9 @@ public interface CheckinRepository extends JpaRepository<Checkin, Integer> {
     Long countByCheckInDateTimeEquals(LocalDateTime checkInDateTime);
     Long countByCheckInDateTimeIsNotNullAndCheckOutDateTimeIsNull();
 
+    @Query("SELECT c FROM Checkin c WHERE c.checkOutDateTime IS NULL")
+    Iterable<Checkin> findCurrentGuests();
+
     @Query("SELECT COUNT(c) FROM Checkin c WHERE c.checkInDateTime BETWEEN :startOfWeek AND :endOfWeek")
     Long countByCheckinDateBetweenThisWeek(@Param("startOfWeek") LocalDateTime startOfWeek, @Param("endOfWeek") LocalDateTime endOfWeek);
 
