@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,28 +15,33 @@ import java.security.Principal;
 public class UserController {
     private final UserService userService;
 
+    @Operation(summary = "Invite a user", description = "Invite a user as host")
     @PostMapping("/invite")
     public ResponseEntity<UserInviteResponse> inviteUser(@RequestBody UserInviteRequest request) throws MessagingException {
         return ResponseEntity.ok(userService.inviteUser(request));
     }
 
+    @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
         userService.forgotPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Reset password", description = "Reset password for user")
     @PatchMapping("/reset-password/{id}")
     public ResponseEntity<?> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) throws MessagingException {
         userService.resetPassword(id, request);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Update user", description = "Update user information")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
+    @Operation(summary = "Change password", description = "Change password for user")
     @PatchMapping
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequest request,
@@ -45,6 +51,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Get connected user", description = "Get connected user")
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getConnectedUser(Principal connectedUser) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -52,16 +59,19 @@ public class UserController {
         return ResponseEntity.ok(userResponse);
     }
 
+    @Operation(summary = "Get user", description = "Get user by ID")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUser(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
+    @Operation(summary = "Get all users", description = "Get all users")
     @GetMapping
     public ResponseEntity<Iterable<UserResponse>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());
     }
 
+    @Operation(summary = "Delete user", description = "Delete user by ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
