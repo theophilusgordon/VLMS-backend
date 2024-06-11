@@ -1,5 +1,6 @@
 package com.theophilusgordon.guestlogixserver.config;
 
+import com.theophilusgordon.guestlogixserver.auth.LogoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkin;
+package com.theophilusgordon.guestlogixserver.visit;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckinRequest {
+public class VisitRequest {
     @NotBlank(message = "Guest id is required")
     private String guestId;
     @NotBlank(message  = "Host id is required")

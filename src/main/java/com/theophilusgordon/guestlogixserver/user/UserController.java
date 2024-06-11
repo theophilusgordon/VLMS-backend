@@ -23,28 +23,28 @@ public class UserController {
 
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) throws MessagingException {
+    public ResponseEntity<?> forgotPassword(@RequestBody PasswordRequestResetRequest request) throws MessagingException {
         userService.forgotPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Reset password", description = "Reset password for user")
     @PatchMapping("/reset-password/{id}")
-    public ResponseEntity<?> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) throws MessagingException {
+    public ResponseEntity<?> resetPassword(@PathVariable String id, @RequestBody PasswordResetRequest request) throws MessagingException {
         userService.resetPassword(id, request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update user", description = "Update user information")
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @Operation(summary = "Change password", description = "Change password for user")
     @PatchMapping
     public ResponseEntity<?> changePassword(
-            @RequestBody ChangePasswordRequest request,
+            @RequestBody PasswordChangeRequest request,
             Principal connectedUser
     ) {
         userService.changePassword(request, connectedUser);

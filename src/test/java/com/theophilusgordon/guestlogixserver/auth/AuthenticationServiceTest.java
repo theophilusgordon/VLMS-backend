@@ -3,7 +3,7 @@ package com.theophilusgordon.guestlogixserver.auth;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
-import com.theophilusgordon.guestlogixserver.config.JwtService;
+import com.theophilusgordon.guestlogixserver.utils.JwtService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;

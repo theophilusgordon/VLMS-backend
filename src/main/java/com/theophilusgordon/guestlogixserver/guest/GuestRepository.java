@@ -8,3 +8,4 @@ public interface GuestRepository extends JpaRepository<Guest, String>{
     Boolean existsByEmail(String email);
     Optional<Guest> findByQrCode(byte[] qrCode);
 }
+

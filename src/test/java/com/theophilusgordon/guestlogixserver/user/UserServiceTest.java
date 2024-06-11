@@ -37,7 +37,7 @@ class UserServiceTest {
     @Test
     void whenUpdateUser_thenUserIsUpdated() {
         String id = "mockId";
-        UpdateUserRequest request = new UpdateUserRequest(
+        UserUpdateRequest request = new UserUpdateRequest(
                 "Jane",
                 "Doe",
                 "Smith",
@@ -57,7 +57,7 @@ class UserServiceTest {
     @Test
     void whenChangePassword_thenPasswordIsChanged() {
         String currentPassword = "oldPassword";
-        ChangePasswordRequest request = new ChangePasswordRequest(
+        PasswordChangeRequest request = new PasswordChangeRequest(
                 currentPassword,
                 "newPassword",
                 "newPassword"

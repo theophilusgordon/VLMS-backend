@@ -1,7 +1,7 @@
 package com.theophilusgordon.guestlogixserver.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.theophilusgordon.guestlogixserver.config.JwtService;
+import com.theophilusgordon.guestlogixserver.utils.JwtService;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.token.TokenService;
 import com.theophilusgordon.guestlogixserver.user.Status;

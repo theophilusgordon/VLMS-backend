@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.config;
+package com.theophilusgordon.guestlogixserver.utils;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

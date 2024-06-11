@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkin;
+package com.theophilusgordon.guestlogixserver.visit;
 
 import com.theophilusgordon.guestlogixserver.guest.Guest;
 import com.theophilusgordon.guestlogixserver.user.User;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Checkin {
+public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

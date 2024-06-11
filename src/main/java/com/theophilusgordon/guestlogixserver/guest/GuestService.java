@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class GuestService {
     private final GuestRepository guestRepository;
-
     private final QRCodeService qrCodeService;
 
     public Guest findByQrCode(byte[] qrCode){
@@ -70,6 +69,10 @@ public class GuestService {
         var guest =  guestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Guest", id));
         return this.buildGuestResponse(guest);
+    }
+
+    public Integer getTotalGuests(){
+        return guestRepository.findAll().size();
     }
 
     private GuestResponse buildGuestResponse(Guest guest) {

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class UserInviteRequest {
-    @NotBlank(message = "Email is rewuired")
+    @NotBlank(message = "Email is required")
     @Email
     private String email;
     @NotBlank(message = "Role is required")

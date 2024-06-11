@@ -21,16 +21,12 @@ public class Guest {
     )
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
-    @NotBlank(message = "First name is required")
     private String firstName;
     private String middleName;
-    @NotBlank(message = "Last name is required")
     private String lastName;
-    @NotBlank(message = "Email is required")
     private String email;
     private String phone;
     private String profilePhotoUrl;
-    @NotBlank(message = "Company is required")
     private String company;
 
     @Lob

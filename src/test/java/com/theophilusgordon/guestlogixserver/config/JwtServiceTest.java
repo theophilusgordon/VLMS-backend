@@ -1,7 +1,6 @@
 package com.theophilusgordon.guestlogixserver.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.theophilusgordon.guestlogixserver.utils.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

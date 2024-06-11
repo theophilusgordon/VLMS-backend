@@ -1,6 +1,5 @@
 package com.theophilusgordon.guestlogixserver.statistics;
 
-import com.theophilusgordon.guestlogixserver.checkin.CheckinResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

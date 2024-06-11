@@ -33,7 +33,7 @@ class UserControllerTest {
     @Test
     void whenUpdateUser_thenUserIsUpdated() {
         String id = "mockId";
-        UpdateUserRequest request = new UpdateUserRequest(
+        UserUpdateRequest request = new UserUpdateRequest(
                 "Jane",
                 "Doe",
                 "Smith",
@@ -49,7 +49,7 @@ class UserControllerTest {
 
     @Test
     void whenChangePassword_thenPasswordIsChanged() {
-        ChangePasswordRequest request = new ChangePasswordRequest(
+        PasswordChangeRequest request = new PasswordChangeRequest(
                 "oldPassword",
                 "newPassword",
                 "newPassword"

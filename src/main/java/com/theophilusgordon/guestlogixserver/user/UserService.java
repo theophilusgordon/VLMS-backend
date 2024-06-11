@@ -16,18 +16,18 @@ import java.security.Principal;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final MailService mailService;
 
     public UserInviteResponse inviteUser(UserInviteRequest request) throws MessagingException {
-        if(repository.existsByEmail(request.getEmail()))
+        if(Boolean.TRUE.equals(userRepository.existsByEmail(request.getEmail())))
             throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
 
         var user = User.builder()
                 .email(request.getEmail())
                 .role(this.createRole(request.getRole()))
                 .build();
-        var savedUser = repository.save(user);
+        var savedUser = userRepository.save(user);
         mailService.sendInvitationMail(
                 user.getEmail(),
                 "Invitation to Join Guest Logix as a Host",
@@ -42,7 +42,7 @@ public class UserService {
     }
 
     public void forgotPassword(String email) throws MessagingException {
-        var user = repository.findByEmail(email)
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
         mailService.sendForgotPasswordMail(
                 user.getEmail(),
@@ -51,8 +51,8 @@ public class UserService {
         );
     }
 
-    public void resetPassword(String id, ResetPasswordRequest request) throws MessagingException {
-        var user = repository.findById(id)
+    public void resetPassword(String id, PasswordResetRequest request) throws MessagingException {
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
 
         if (!request.getPassword().equals(request.getConfirmPassword())) {
@@ -60,7 +60,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        repository.save(user);
+        userRepository.save(user);
         mailService.sendPasswordResetSuccessMail(
                 user.getEmail(),
                 "Password Reset Successful",
@@ -68,8 +68,8 @@ public class UserService {
         );
     }
 
-    public UserResponse updateUser(String id, UpdateUserRequest request) {
-        var user = repository.findById(id)
+    public UserResponse updateUser(String id, UserUpdateRequest request) {
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
         if(request.getFirstName() != null)
             user.setFirstName(request.getFirstName());
@@ -81,12 +81,12 @@ public class UserService {
             user.setPhone(request.getPhone());
         if(request.getProfilePhotoUrl() != null)
             user.setProfilePhotoUrl(request.getProfilePhotoUrl());
-        repository.save(user);
+        userRepository.save(user);
 
         return this.buildUserResponse(user);
     }
 
-    public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
+    public void changePassword(PasswordChangeRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
@@ -99,26 +99,30 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        repository.save(user);
+        userRepository.save(user);
     }
 
     public UserResponse getUser(String id) {
-        User user = repository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
         return this.buildUserResponse(user);
     }
 
     public Iterable<UserResponse> getUsers() {
-        return repository.findAll().stream()
+        return userRepository.findAll().stream()
                 .map(this::buildUserResponse)
                 .toList();
     }
 
+    public Integer getTotalHosts(){
+        return userRepository.findAllByRole(Role.HOST).size();
+    }
+
     public void deleteUser(String id) {
-        if (!repository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new NotFoundException("User", id);
         }
-        repository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     private Role createRole(String value) {

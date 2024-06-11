@@ -19,7 +19,7 @@ public class DatabaseSeeder {
     public CommandLineRunner initAdminUser(UserRepository userRepository){
         return args -> {
             String adminEmail = "gordonfiifi@gmail.com";
-            if (!userRepository.existsByEmail(adminEmail)) {
+            if (Boolean.FALSE.equals(userRepository.existsByEmail(adminEmail))) {
                 User admin = new User();
                 admin.setEmail(adminEmail);
                 admin.setFirstName("Theophilus");

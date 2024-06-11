@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.checkin;
+package com.theophilusgordon.guestlogixserver.visit;
 
 import com.google.zxing.WriterException;
 import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CheckinServiceTest {
+class VisitServiceTest {
 
     @InjectMocks
-    private CheckinService checkinService;
+    private VisitService visitService;
 
     @Mock
-    private CheckinRepository checkInRepository;
+    private VisitRepository checkInRepository;
 
     @Mock
     private GuestRepository guestRepository;
@@ -46,14 +46,14 @@ class CheckinServiceTest {
     void testGetCheckIns() {
         when(checkInRepository.findAll()).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckIns();
+        visitService.getCheckIns();
 
         verify(checkInRepository, times(1)).findAll();
     }
 
     @Test
     void testCheckIn() throws IOException, WriterException, MessagingException {
-        CheckinRequest request = new CheckinRequest();
+        VisitRequest request = new VisitRequest();
         request.setGuestId("guestId");
         request.setHostId("hostId");
 
@@ -63,16 +63,16 @@ class CheckinServiceTest {
         when(guestRepository.findById(anyString())).thenReturn(Optional.of(guest));
         when(hostRepository.findById(anyString())).thenReturn(Optional.of(host));
 
-        checkinService.checkIn(request);
+        visitService.checkIn(request);
 
-        verify(checkInRepository, times(1)).save(any(Checkin.class));
+        verify(checkInRepository, times(1)).save(any(Visit.class));
     }
 
     @Test
     void testGetCheckInNotFound() {
         when(checkInRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> checkinService.getCheckIn(1));
+        assertThrows(NotFoundException.class, () -> visitService.getCheckIn(1));
     }
 
     @Test
@@ -80,7 +80,7 @@ class CheckinServiceTest {
         when(guestRepository.existsById(anyString())).thenReturn(true);
         when(checkInRepository.findByGuestId(anyString())).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckInsByGuest("guestId");
+        visitService.getCheckInsByGuest("guestId");
 
         verify(checkInRepository, times(1)).findByGuestId(anyString());
     }
@@ -89,7 +89,7 @@ class CheckinServiceTest {
     void testGetCheckInsByGuestNotFound() {
         when(guestRepository.existsById(anyString())).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> checkinService.getCheckInsByGuest("guestId"));
+        assertThrows(NotFoundException.class, () -> visitService.getCheckInsByGuest("guestId"));
     }
 
     @Test
@@ -97,7 +97,7 @@ class CheckinServiceTest {
         when(hostRepository.existsById(anyString())).thenReturn(true);
         when(checkInRepository.findByHostId(anyString())).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckInsByHost("hostId");
+        visitService.getCheckInsByHost("hostId");
 
         verify(checkInRepository, times(1)).findByHostId(anyString());
     }
@@ -106,7 +106,7 @@ class CheckinServiceTest {
     void testGetCheckInsByHostNotFound() {
         when(hostRepository.existsById(anyString())).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> checkinService.getCheckInsByHost("hostId"));
+        assertThrows(NotFoundException.class, () -> visitService.getCheckInsByHost("hostId"));
     }
 
     @Test
@@ -114,7 +114,7 @@ class CheckinServiceTest {
         String checkInDate = LocalDateTime.now().toString();
         when(checkInRepository.findByCheckInDateTime(any(LocalDateTime.class))).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckInsByCheckInDate(checkInDate);
+        visitService.getCheckInsByCheckInDate(checkInDate);
 
         verify(checkInRepository, times(1)).findByCheckInDateTime(any(LocalDateTime.class));
     }
@@ -123,7 +123,7 @@ class CheckinServiceTest {
     void testGetCheckInsByCheckInDateInvalidDate() {
         String checkInDate = "invalidDate";
 
-        assertThrows(BadRequestException.class, () -> checkinService.getCheckInsByCheckInDate(checkInDate));
+        assertThrows(BadRequestException.class, () -> visitService.getCheckInsByCheckInDate(checkInDate));
     }
 
     @Test
@@ -132,7 +132,7 @@ class CheckinServiceTest {
         String end = LocalDateTime.now().plusDays(1).toString();
         when(checkInRepository.findByCheckInDateTimeBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckInsByPeriod(start, end);
+        visitService.getCheckInsByPeriod(start, end);
 
         verify(checkInRepository, times(1)).findByCheckInDateTimeBetween(any(LocalDateTime.class), any(LocalDateTime.class));
     }
@@ -142,7 +142,7 @@ class CheckinServiceTest {
         String start = "invalidStart";
         String end = "invalidEnd";
 
-        assertThrows(BadRequestException.class, () -> checkinService.getCheckInsByPeriod(start, end));
+        assertThrows(BadRequestException.class, () -> visitService.getCheckInsByPeriod(start, end));
     }
 
     @Test
@@ -154,7 +154,7 @@ class CheckinServiceTest {
         when(hostRepository.existsById(anyString())).thenReturn(true);
         when(checkInRepository.findByHostIdAndCheckInDateTimeBetween(anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(new ArrayList<>());
 
-        checkinService.getCheckInsByHostAndPeriod(hostId, start, end);
+        visitService.getCheckInsByHostAndPeriod(hostId, start, end);
 
         verify(checkInRepository, times(1)).findByHostIdAndCheckInDateTimeBetween(anyString(), any(LocalDateTime.class), any(LocalDateTime.class));
     }
@@ -167,7 +167,7 @@ class CheckinServiceTest {
 
         when(hostRepository.existsById(anyString())).thenReturn(false);
 
-        assertThrows(NotFoundException.class, () -> checkinService.getCheckInsByHostAndPeriod(hostId, start, end));
+        assertThrows(NotFoundException.class, () -> visitService.getCheckInsByHostAndPeriod(hostId, start, end));
     }
 
     @Test
@@ -178,6 +178,6 @@ class CheckinServiceTest {
 
         when(hostRepository.existsById(anyString())).thenReturn(true);
 
-        assertThrows(BadRequestException.class, () -> checkinService.getCheckInsByHostAndPeriod(hostId, start, end));
+        assertThrows(BadRequestException.class, () -> visitService.getCheckInsByHostAndPeriod(hostId, start, end));
     }
 }

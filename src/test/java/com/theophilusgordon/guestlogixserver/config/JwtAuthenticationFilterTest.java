@@ -2,6 +2,7 @@ package com.theophilusgordon.guestlogixserver.config;
 
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
+import com.theophilusgordon.guestlogixserver.utils.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

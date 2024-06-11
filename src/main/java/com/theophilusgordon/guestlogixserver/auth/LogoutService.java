@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.config;
+package com.theophilusgordon.guestlogixserver.auth;
 
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
