@@ -1,4 +1,4 @@
-package com.theophilusgordon.guestlogixserver.utils;
+package com.theophilusgordon.guestlogixserver.jwt;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

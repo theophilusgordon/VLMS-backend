@@ -1,7 +1,6 @@
-package com.theophilusgordon.guestlogixserver.config;
+package com.theophilusgordon.guestlogixserver.jwt;
 
 import com.theophilusgordon.guestlogixserver.token.TokenRepository;
-import com.theophilusgordon.guestlogixserver.utils.JwtService;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
