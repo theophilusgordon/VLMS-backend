@@ -1,6 +1,7 @@
 package com.theophilusgordon.guestlogixserver.clocking;
 
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
+import com.theophilusgordon.guestlogixserver.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public class ClockingService {
     public ClockingResponse clockIn(ClockInRequest clockInRequest) {
         Clocking clocking = new Clocking();
         clocking.setUserId(clockInRequest.getUserId());
-        clocking.setWorkLocation(WorkLocation.OFFICE);
+        clocking.setWorkLocation(createWorkLocation(clockInRequest.getWorkLocation()));
         clocking.setClockInDateTime(LocalDateTime.now());
         clockingRepository.save(clocking);
         return ClockingResponse.builder()
@@ -34,5 +35,14 @@ public class ClockingService {
                 .clockInDateTime(String.valueOf(clocking.getClockInDateTime()))
                 .clockOutDateTime(String.valueOf(clocking.getClockOutDateTime()))
                 .build();
+    }
+
+    private WorkLocation createWorkLocation(String value) {
+        for (WorkLocation workLocation : WorkLocation.values()) {
+            if (workLocation.name().equalsIgnoreCase(value)) {
+                return workLocation;
+            }
+        }
+        throw new IllegalArgumentException("Invalid role: " + value);
     }
 }

@@ -11,4 +11,6 @@ import lombok.Setter;
 public class ClockInRequest {
     @NotBlank(message = "User id is required")
     private String userId;
+    @NotBlank(message = "Work location is required")
+    private String workLocation;
 }
