@@ -53,7 +53,6 @@ class UserServiceTest {
         verify(userRepository, times(1)).save(user);
     }
 
-//TODO:    fix this test
     @Test
     void whenChangePassword_thenPasswordIsChanged() {
         String currentPassword = "oldPassword";
