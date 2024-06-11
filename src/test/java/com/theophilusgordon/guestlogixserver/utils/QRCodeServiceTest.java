@@ -30,3 +30,4 @@ class QRCodeServiceTest {
         assertTrue(qrCodeImage.length > 0);
     }
 }
+
