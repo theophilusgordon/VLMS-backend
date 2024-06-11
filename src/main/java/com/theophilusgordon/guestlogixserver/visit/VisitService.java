@@ -170,11 +170,13 @@ public class VisitService {
                         .build())
                 .host(UserResponse.builder()
                         .id(host.getId())
+                        .email(host.getEmail())
                         .firstName(host.getFirstName())
                         .middleName(host.getMiddleName())
                         .lastName(host.getLastName())
                         .phone(host.getPhone())
                         .email(host.getEmail())
+                        .department(host.getDepartment())
                         .profilePhotoUrl(host.getProfilePhotoUrl())
                         .build())
                 .build();

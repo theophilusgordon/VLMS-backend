@@ -1,6 +1,7 @@
 package com.theophilusgordon.guestlogixserver.clocking;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.theophilusgordon.guestlogixserver.user.UserResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,8 @@ import lombok.Setter;
 public class ClockingResponse {
     @JsonProperty("id")
     private Integer id;
-    @JsonProperty("userId")
-    private String userId;
+    @JsonProperty("User")
+    private UserResponse user;
     @JsonProperty("workLocation")
     private String workLocation;
     @JsonProperty("clockInDateTime")
