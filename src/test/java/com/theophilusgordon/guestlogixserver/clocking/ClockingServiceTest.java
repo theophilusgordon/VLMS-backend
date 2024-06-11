@@ -1,5 +1,7 @@
 package com.theophilusgordon.guestlogixserver.clocking;
 
+import com.theophilusgordon.guestlogixserver.user.User;
+import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +17,9 @@ import static org.mockito.Mockito.*;
 class ClockingServiceTest {
     @Mock
     private ClockingRepository clockingRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private ClockingService clockingService;
@@ -38,12 +43,17 @@ class ClockingServiceTest {
         clocking.setWorkLocation(WorkLocation.REMOTE);
         clocking.setClockInDateTime(LocalDateTime.now());
 
+        User user = new User();
+        user.setId("123");
+
         when(clockingRepository.save(any(Clocking.class))).thenReturn(clocking);
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         ClockingResponse response = clockingService.clockIn(request);
 
-        assertEquals(clocking.getUserId(), response.getUserId());
+        assertEquals(clocking.getUserId(), response.getUser().getId());
         verify(clockingRepository, times(1)).save(any(Clocking.class));
+        verify(userRepository, times(1)).findById(anyString());
     }
 
     @Test
@@ -57,12 +67,17 @@ class ClockingServiceTest {
         clocking.setWorkLocation(WorkLocation.REMOTE);
         clocking.setClockInDateTime(LocalDateTime.now());
 
+        User user = new User();
+        user.setId("123");
+
         when(clockingRepository.findById(request.getClockingId())).thenReturn(Optional.of(clocking));
+        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
 
         ClockingResponse response = clockingService.clockOut(request);
 
         assertEquals(clocking.getId(), response.getId());
         verify(clockingRepository, times(1)).findById(request.getClockingId());
         verify(clockingRepository, times(1)).save(clocking);
+        verify(userRepository, times(1)).findById(anyString());
     }
 }

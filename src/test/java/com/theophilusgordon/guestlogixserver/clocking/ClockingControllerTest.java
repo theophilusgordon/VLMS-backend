@@ -7,8 +7,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -33,16 +31,7 @@ class ClockingControllerTest {
         request.setUserId("123");
         request.setWorkLocation("REMOTE");
 
-        ClockingResponse expectedResponse = new ClockingResponse(
-                1,
-                "123",
-                "REMOTE",
-                String.valueOf(LocalDateTime.now()),
-null
-        );
-        expectedResponse.setUserId(request.getUserId());
-        expectedResponse.setWorkLocation(String.valueOf(WorkLocation.REMOTE));
-
+        ClockingResponse expectedResponse = mock(ClockingResponse.class);
         when(clockingService.clockIn(request)).thenReturn(expectedResponse);
 
         ResponseEntity<ClockingResponse> responseEntity = clockingController.clockIn(request);
@@ -56,17 +45,7 @@ null
         ClockOutRequest request = new ClockOutRequest(1);
         request.setClockingId(1);
 
-        ClockingResponse expectedResponse = new ClockingResponse(
-                1,
-                "123",
-                "REMOTE",
-                String.valueOf(LocalDateTime.now()),
-null
-        );
-        expectedResponse.setId(request.getClockingId());
-        expectedResponse.setUserId("123");
-        expectedResponse.setWorkLocation(String.valueOf(WorkLocation.REMOTE));
-
+        ClockingResponse expectedResponse = mock(ClockingResponse.class);
         when(clockingService.clockOut(request)).thenReturn(expectedResponse);
 
         ResponseEntity<ClockingResponse> responseEntity = clockingController.clockOut(request);
