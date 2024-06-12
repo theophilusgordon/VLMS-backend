@@ -2,13 +2,11 @@ package com.theophilusgordon.guestlogixserver.guest;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +15,7 @@ public class Guest {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
+            type = org.hibernate.id.uuid.UuidGenerator.class
     )
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
