@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/report")
+@RequestMapping("/api/v1/reports")
 public class ReportController {
     private final PdfService pdfService;
     private ChartService chartService;
 
     @Operation(summary = "Generate PDF with chart", description = "Generate a PDF file with charts")
-    @PostMapping("/generate")
+    @PostMapping()
     public ResponseEntity<byte[]> generatePdf(ReportGenerateRequest request) throws Exception {
         byte[] chartImage = chartService.createChart();
         byte[] pdfContent = pdfService.createPdfWithChart(chartImage, request);

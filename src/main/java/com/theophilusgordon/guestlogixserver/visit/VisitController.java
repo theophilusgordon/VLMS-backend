@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/visit")
+@RequestMapping("/api/v1/visits")
 public class VisitController {
     private final VisitService visitService;
 

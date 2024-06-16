@@ -15,7 +15,7 @@ public class Guest {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",
-            type = org.hibernate.id.uuid.UuidGenerator.class
+            strategy = "org.hibernate.id.UUIDGenerator"
     )
     @Column(name = "id", updatable = false, nullable = false)
     private String id;
