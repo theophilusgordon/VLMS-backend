@@ -3,6 +3,7 @@ package com.theophilusgordon.guestlogixserver.user;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -65,10 +66,37 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
-    @Operation(summary = "Get all users", description = "Get all users")
+    @Operation(summary = "Get all users", description = "Get all users paginated. Default page is 1 and default size is 10")
     @GetMapping
-    public ResponseEntity<Iterable<UserResponse>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers());
+    public ResponseEntity<Page<UserResponse>> getUsers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String sort
+            ) {
+        Page<UserResponse> users = userService.getUsers(page, size, sort);
+        return ResponseEntity.ok(users);
+    }
+
+    @Operation(summary = "Get hosts", description = "Get all hosts paginated. Default page is 1 and default size is 10")
+    @GetMapping("/hosts")
+    public ResponseEntity<Page<UserResponse>> getHosts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String sort
+    ) {
+        Page<UserResponse> hosts = userService.getHosts(page, size, sort);
+        return ResponseEntity.ok(hosts);
+    }
+
+    @GetMapping("/hosts")
+    public ResponseEntity<Page<UserResponse>> searchHosts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam String query,
+            @RequestParam String sort
+    ) {
+        Page<UserResponse> hosts = userService.searchHosts(query, page, size, sort);
+        return ResponseEntity.ok(hosts);
     }
 
     @Operation(summary = "Delete user", description = "Delete user by ID")

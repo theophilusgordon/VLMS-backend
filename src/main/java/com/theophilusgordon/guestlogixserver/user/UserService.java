@@ -5,6 +5,10 @@ import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -108,14 +112,26 @@ public class UserService {
         return this.buildUserResponse(user);
     }
 
-    public Iterable<UserResponse> getUsers() {
-        return userRepository.findAll().stream()
-                .map(this::buildUserResponse)
-                .toList();
+    public Page<UserResponse> getUsers(int page, int size, String sort) {
+       Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+         return userRepository.findAll(pageable)
+                .map(this::buildUserResponse);
+    }
+
+    public Page<UserResponse> searchHosts(String query, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return userRepository.findAllByRoleAndFullNameContaining(Role.HOST, query, pageable)
+                .map(this::buildUserResponse);
+    }
+
+    public Page<UserResponse> getHosts(int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return userRepository.findAllByRole(Role.HOST, pageable)
+                .map(this::buildUserResponse);
     }
 
     public Integer getTotalHosts(){
-        return userRepository.findAllByRole(Role.HOST).size();
+        return userRepository.countByRole(Role.HOST);
     }
 
     public void deleteUser(String id) {
