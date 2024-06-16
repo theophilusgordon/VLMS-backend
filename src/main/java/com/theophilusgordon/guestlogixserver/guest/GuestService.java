@@ -4,6 +4,10 @@ import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -58,11 +62,16 @@ public class GuestService {
         return this.buildGuestResponse(guest);
     }
 
-    public Iterable<GuestResponse> getAllGuests(){
-        var guests = guestRepository.findAll();
-        return guests.stream()
-            .map(this::buildGuestResponse)
-            .toList();
+    public Page<GuestResponse> getGuests(int page, int size, String sort){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return guestRepository.findAll(pageable)
+                .map(this::buildGuestResponse);
+    }
+
+    public Page<GuestResponse> searchGuests(String query, int page, int size, String sort){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return guestRepository.findAllByFullNameContaining(query, pageable)
+                .map(this::buildGuestResponse);
     }
 
     public GuestResponse getGuest(@PathVariable String id){
@@ -71,8 +80,8 @@ public class GuestService {
         return this.buildGuestResponse(guest);
     }
 
-    public Integer getTotalGuests(){
-        return guestRepository.findAll().size();
+    public Long getTotalGuests(){
+        return guestRepository.count();
     }
 
     private GuestResponse buildGuestResponse(Guest guest) {

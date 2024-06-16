@@ -30,7 +30,7 @@ public class PdfService {
         Document document = new Document(pdfDocument);
 
 
-        int totalGuests = guestService.getTotalGuests();
+        long totalGuests = guestService.getTotalGuests();
         int totalHosts = userService.getTotalHosts();
         int totalVisits = visitService.getTotalVisits();
         int totalCurrentGuests = visitService.getTotalCurrentGuests();

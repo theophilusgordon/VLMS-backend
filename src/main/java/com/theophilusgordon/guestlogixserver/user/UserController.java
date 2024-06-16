@@ -88,7 +88,7 @@ public class UserController {
         return ResponseEntity.ok(hosts);
     }
 
-    @GetMapping("/hosts")
+    @GetMapping("/hosts/search")
     public ResponseEntity<Page<UserResponse>> searchHosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -101,7 +101,7 @@ public class UserController {
 
     @Operation(summary = "Delete user", description = "Delete user by ID")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }

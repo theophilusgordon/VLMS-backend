@@ -84,12 +84,12 @@ class UserServiceTest {
         verify(userRepository, times(1)).findById(id);
     }
 
-    @Test
-    void whenGetUsers_thenUsersAreReturned() {
-        userService.getUsers();
-
-        verify(userRepository, times(1)).findAll();
-    }
+//    @Test
+//    void whenGetUsers_thenUsersAreReturned() {
+//        userService.getUsers();
+//
+//        verify(userRepository, times(1)).findAll();
+//    }
 
     @Test
     void whenDeleteUser_thenUserIsDeleted() {

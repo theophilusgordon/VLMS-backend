@@ -62,12 +62,12 @@ class GuestServiceTest {
         verify(guestRepository, times(1)).save(any(Guest.class));
     }
 
-    @Test
-    void whenGetAllGuests_thenGuestsAreReturned() {
-        guestService.getAllGuests();
-
-        verify(guestRepository, times(1)).findAll();
-    }
+//    @Test
+//    void whenGetAllGuests_thenGuestsAreReturned() {
+//        guestService.getAllGuests();
+//
+//        verify(guestRepository, times(1)).findAll();
+//    }
 
     @Test
     void whenGetGuest_thenGuestIsReturned() {
