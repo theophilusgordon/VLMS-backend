@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VisitServiceResponse {
+public class VisitResponse {
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("checkInDateTime")

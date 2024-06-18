@@ -75,18 +75,7 @@ public class UserService {
     public User updateUser(String id, UserUpdateRequest request) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
-        if(request.getFirstName() != null)
-            user.setFirstName(request.getFirstName());
-        if(request.getMiddleName() != null)
-            user.setMiddleName(request.getMiddleName());
-        if(request.getLastName() != null)
-            user.setLastName(request.getLastName());
-        if(request.getPhone() != null)
-            user.setPhone(request.getPhone());
-        if(request.getProfilePhotoUrl() != null)
-            user.setProfilePhotoUrl(request.getProfilePhotoUrl());
-        userRepository.save(user);
-
+        userRepository.save(UserMapper.userUpdateRequestToUser(user, request));
         return user;
     }
 
@@ -111,18 +100,15 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User", id));
     }
 
-    public Page<User> getUsers(int page, int size, String sort) {
-       Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+    public Page<User> getUsers(Pageable pageable) {
          return userRepository.findAll(pageable);
     }
 
-    public Page<User> searchHosts(String query, int page, int size, String sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+    public Page<User> searchHosts(String query, Pageable pageable) {
         return userRepository.findAllByRoleAndFullNameContaining(Role.HOST, query, pageable);
     }
 
-    public Page<User> getHosts(int page, int size, String sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+    public Page<User> getHosts(Pageable pageable) {
         return userRepository.findAllByRole(Role.HOST, pageable);
     }
 

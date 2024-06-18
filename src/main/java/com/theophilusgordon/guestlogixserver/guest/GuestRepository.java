@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface GuestRepository extends JpaRepository<Guest, String>{
 
+    Optional<Guest> findByEmail(String email);
     Boolean existsByEmail(String email);
-    Optional<Guest> findByQrCode(byte[] qrCode);
     Page<Guest> findAllByFullNameContaining(String query, Pageable pageable);
     long count();
 }

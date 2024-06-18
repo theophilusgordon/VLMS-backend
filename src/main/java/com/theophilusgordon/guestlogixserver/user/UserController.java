@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -67,34 +68,24 @@ public class UserController {
 
     @Operation(summary = "Get all users", description = "Get all users paginated. Default page is 1 and default size is 10")
     @GetMapping
-    public ResponseEntity<Page<User>> getUsers(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String sort
-            ) {
-        Page<User> users = userService.getUsers(page, size, sort);
+    public ResponseEntity<Page<User>> getUsers(Pageable pageable) {
+        Page<User> users = userService.getUsers(pageable);
         return ResponseEntity.ok(users);
     }
 
     @Operation(summary = "Get hosts", description = "Get all hosts paginated. Default page is 1 and default size is 10")
     @GetMapping("/hosts")
-    public ResponseEntity<Page<User>> getHosts(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String sort
-    ) {
-        Page<User> hosts = userService.getHosts(page, size, sort);
+    public ResponseEntity<Page<User>> getHosts(Pageable pageable) {
+        Page<User> hosts = userService.getHosts(pageable);
         return ResponseEntity.ok(hosts);
     }
 
     @GetMapping("/hosts/search")
     public ResponseEntity<Page<User>> searchHosts(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String query,
-            @RequestParam String sort
+            Pageable pageable,
+            @RequestParam String query
     ) {
-        Page<User> hosts = userService.searchHosts(query, page, size, sort);
+        Page<User> hosts = userService.searchHosts(query, pageable);
         return ResponseEntity.ok(hosts);
     }
 

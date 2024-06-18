@@ -5,13 +5,15 @@ import com.theophilusgordon.guestlogixserver.exception.BadRequestException;
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
 import com.theophilusgordon.guestlogixserver.guest.Guest;
 import com.theophilusgordon.guestlogixserver.guest.GuestRepository;
-import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +33,7 @@ public class VisitService {
     private final MailService mailService;
 
 
-    public VisitServiceResponse checkIn(VisitRequest request) throws IOException, WriterException, MessagingException {
+    public VisitResponse checkIn(VisitRequest request) throws IOException, WriterException, MessagingException {
         var checkin = new Visit();
         checkin.setCheckInDateTime(LocalDateTime.now());
         Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
@@ -59,7 +61,7 @@ public class VisitService {
         return this.buildCheckInResponse(checkin, guest, host);
     }
 
-    public VisitServiceResponse checkOut(Integer id) {
+    public VisitResponse checkOut(Integer id) {
         var checkIn = checkInRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("CheckInOut", String.valueOf(id)));
         checkIn.setCheckOutDateTime(LocalDateTime.now());
@@ -67,19 +69,18 @@ public class VisitService {
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 
-    public Iterable<VisitServiceResponse> getCheckIns() {
-        var checkIns = checkInRepository.findAll();
-        return checkIns.stream()
-                .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
-                .toList();
+    public Page<VisitResponse> getCheckIns(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Visit> checkIns = checkInRepository.findAll(pageable);
+        return checkIns.map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()));
     }
 
-    public VisitServiceResponse getCheckIn(Integer id) {
+    public VisitResponse getCheckIn(Integer id) {
         var checkIn = checkInRepository.findById(id).orElseThrow(() -> new NotFoundException("CheckInOut", String.valueOf(id)));
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 
-    public Iterable<VisitServiceResponse> getCheckInsByGuest(String guestId) {
+    public Iterable<VisitResponse> getCheckInsByGuest(String guestId) {
         if(!guestRepository.existsById(guestId))
             throw new NotFoundException("Guest", guestId);
 
@@ -89,7 +90,7 @@ public class VisitService {
                 .toList();
     }
 
-    public Iterable<VisitServiceResponse> getCheckInsByHost(String hostId) {
+    public Iterable<VisitResponse> getCheckInsByHost(String hostId) {
         if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
@@ -99,7 +100,7 @@ public class VisitService {
                 .toList();
     }
 
-    public Iterable<VisitServiceResponse> getCheckInsByCheckInDate(String checkInDate) {
+    public Iterable<VisitResponse> getCheckInsByCheckInDate(String checkInDate) {
         LocalDateTime dateTime;
         try {
             dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -112,7 +113,7 @@ public class VisitService {
                 .toList();
     }
 
-    public Iterable<VisitServiceResponse> getCheckInsByPeriod(String start, String end) {
+    public Iterable<VisitResponse> getCheckInsByPeriod(String start, String end) {
         Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
         var checkIns = checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond());
         return StreamSupport.stream(checkIns.spliterator(), false)
@@ -120,7 +121,7 @@ public class VisitService {
                 toList();
     }
 
-    public Iterable<VisitServiceResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
+    public Iterable<VisitResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
         if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
@@ -131,7 +132,7 @@ public class VisitService {
                 toList();
     }
 
-    public Iterable<VisitServiceResponse> getCurrentGuests() {
+    public Iterable<VisitResponse> getCurrentGuests() {
         var checkIns = checkInRepository.findCurrentGuests();
         return StreamSupport.stream(checkIns.spliterator(), false)
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
@@ -151,10 +152,10 @@ public class VisitService {
         return (int) StreamSupport.stream(checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond()).spliterator(), false).count();
     }
 
-    private VisitServiceResponse buildCheckInResponse(Visit checkIn, Guest guest, User host) {
+    private VisitResponse buildCheckInResponse(Visit checkIn, Guest guest, User host) {
         if(guest == null || host == null)
             throw new BadRequestException("Guest and Host must be provided");
-        return VisitServiceResponse.builder()
+        return VisitResponse.builder()
                 .id(checkIn.getId())
                 .checkInDateTime(checkIn.getCheckInDateTime())
                 .checkOutDateTime(checkIn.getCheckOutDateTime())

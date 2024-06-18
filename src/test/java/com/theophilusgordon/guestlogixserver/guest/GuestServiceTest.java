@@ -42,26 +42,6 @@ class GuestServiceTest {
         verify(guestRepository, times(1)).save(any(Guest.class));
     }
 
-    @Test
-    void whenUpdateGuest_thenGuestIsUpdated() {
-        String id = "mockId";
-        GuestUpdateRequest request = new GuestUpdateRequest(
-                "Jane",
-                "Doe",
-                "Smith",
-                "0987654321",
-                "http://example.com/profile2.jpg",
-                "ghantech"
-        );
-
-        Guest guest = new Guest();
-        when(guestRepository.findById(anyString())).thenReturn(Optional.of(guest));
-
-        guestService.updateGuest(id, request);
-
-        verify(guestRepository, times(1)).save(any(Guest.class));
-    }
-
 //    @Test
 //    void whenGetAllGuests_thenGuestsAreReturned() {
 //        guestService.getAllGuests();

@@ -14,10 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 public class Guest {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     @JsonProperty("id")
     private String id;
@@ -35,9 +32,6 @@ public class Guest {
     private String profilePhotoUrl;
     @JsonProperty("company")
     private String company;
-
-    @Lob
-    private byte[] qrCode;
 
     @JsonProperty("fullName")
     public String getFullName() {

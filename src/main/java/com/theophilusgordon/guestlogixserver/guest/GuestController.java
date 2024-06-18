@@ -3,6 +3,7 @@ package com.theophilusgordon.guestlogixserver.guest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,33 +20,17 @@ public class GuestController {
         return ResponseEntity.ok(service.registerGuest(request));
     }
 
-    @Operation(summary = "Update a guest", description = "Update guest information")
-    @PutMapping("/{id}")
-    public ResponseEntity<Guest> updateGuest(@PathVariable String id, @RequestBody GuestUpdateRequest request) {
-        return ResponseEntity.ok(service.updateGuest(id, request));
-    }
-
-    @Operation(summary = "Get all guests", description = "Get all guests paginated. Default page is 1, default size is 10")
+    @Operation(summary = "Get all guests", description = "Get all guests paginated. Default page is 0, default size is 10")
     @GetMapping
-    public ResponseEntity<Page<Guest>> getGuests(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String sort
-
-    ) {
-        Page<Guest> guests = guestService.getGuests(page, size, sort);
+    public ResponseEntity<Page<Guest>> getGuests(Pageable pageable) {
+        Page<Guest> guests = guestService.getGuests(pageable);
         return ResponseEntity.ok(guests);
     }
 
     @Operation(summary = "Search guests", description = "Search guests by full name")
     @GetMapping("/search")
-    public ResponseEntity<Page<Guest>> searchGuests(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam String query,
-            @RequestParam String sort
-    ){
-        Page<Guest> guests = guestService.searchGuests(query, page, size, sort);
+    public ResponseEntity<Page<Guest>> searchGuests(Pageable pageable, @RequestParam String query){
+        Page<Guest> guests = guestService.searchGuests(pageable, query);
         return ResponseEntity.ok(guests);
     }
 
