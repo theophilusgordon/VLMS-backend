@@ -1,10 +1,8 @@
 package com.theophilusgordon.guestlogixserver.clocking;
 
 import com.theophilusgordon.guestlogixserver.exception.NotFoundException;
-import com.theophilusgordon.guestlogixserver.user.Role;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
-import com.theophilusgordon.guestlogixserver.user.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +48,7 @@ public class ClockingService {
     private ClockingResponse buildClockingResponse(Clocking clocking, User user) {
         return ClockingResponse.builder()
                 .id(clocking.getId())
-                .user(UserResponse.builder()
+                .user(User.builder()
                         .id(user.getId())
                         .email(user.getEmail())
                         .firstName(user.getFullName())

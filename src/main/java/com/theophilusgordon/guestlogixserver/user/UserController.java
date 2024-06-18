@@ -24,27 +24,27 @@ public class UserController {
 
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestBody PasswordRequestResetRequest request) throws MessagingException {
+    public ResponseEntity<Void> forgotPassword(@RequestBody PasswordRequestResetRequest request) throws MessagingException {
         userService.forgotPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Reset password", description = "Reset password for user")
     @PatchMapping("/reset-password/{id}")
-    public ResponseEntity<?> resetPassword(@PathVariable String id, @RequestBody PasswordResetRequest request) throws MessagingException {
+    public ResponseEntity<Void> resetPassword(@PathVariable String id, @RequestBody PasswordResetRequest request) throws MessagingException {
         userService.resetPassword(id, request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update user", description = "Update user information")
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @Operation(summary = "Change password", description = "Change password for user")
     @PatchMapping
-    public ResponseEntity<?> changePassword(
+    public ResponseEntity<Void> changePassword(
             @RequestBody PasswordChangeRequest request,
             Principal connectedUser
     ) {
@@ -54,48 +54,47 @@ public class UserController {
 
     @Operation(summary = "Get connected user", description = "Get connected user")
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getConnectedUser(Principal connectedUser) {
+    public ResponseEntity<User> getConnectedUser(Principal connectedUser) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        UserResponse userResponse = this.convertUserToUserResponse(user);
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Get user", description = "Get user by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable String id) {
+    public ResponseEntity<User> getUser(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
     @Operation(summary = "Get all users", description = "Get all users paginated. Default page is 1 and default size is 10")
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> getUsers(
+    public ResponseEntity<Page<User>> getUsers(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam String sort
             ) {
-        Page<UserResponse> users = userService.getUsers(page, size, sort);
+        Page<User> users = userService.getUsers(page, size, sort);
         return ResponseEntity.ok(users);
     }
 
     @Operation(summary = "Get hosts", description = "Get all hosts paginated. Default page is 1 and default size is 10")
     @GetMapping("/hosts")
-    public ResponseEntity<Page<UserResponse>> getHosts(
+    public ResponseEntity<Page<User>> getHosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam String sort
     ) {
-        Page<UserResponse> hosts = userService.getHosts(page, size, sort);
+        Page<User> hosts = userService.getHosts(page, size, sort);
         return ResponseEntity.ok(hosts);
     }
 
     @GetMapping("/hosts/search")
-    public ResponseEntity<Page<UserResponse>> searchHosts(
+    public ResponseEntity<Page<User>> searchHosts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam String query,
             @RequestParam String sort
     ) {
-        Page<UserResponse> hosts = userService.searchHosts(query, page, size, sort);
+        Page<User> hosts = userService.searchHosts(query, page, size, sort);
         return ResponseEntity.ok(hosts);
     }
 
@@ -104,18 +103,5 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
-    }
-
-    private UserResponse convertUserToUserResponse(User user) {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setId(user.getId());
-        userResponse.setFirstName(user.getFirstName());
-        userResponse.setMiddleName(user.getMiddleName());
-        userResponse.setLastName(user.getLastName());
-        userResponse.setPhone(user.getPhone());
-        userResponse.setEmail(user.getEmail());
-        userResponse.setProfilePhotoUrl(user.getProfilePhotoUrl());
-        userResponse.setRole(user.getRole());
-        return userResponse;
     }
 }

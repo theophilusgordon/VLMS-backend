@@ -1,5 +1,7 @@
 package com.theophilusgordon.guestlogixserver.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.theophilusgordon.guestlogixserver.token.Token;
 import com.theophilusgordon.guestlogixserver.token.TokenType;
 import jakarta.persistence.*;
@@ -28,30 +30,43 @@ public class User implements UserDetails {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     @Column(name = "id", updatable = false, nullable = false)
+    @JsonProperty("id")
     private String id;
+    @JsonProperty("firstName")
     private String firstName;
+    @JsonProperty("middleName")
     private String middleName;
+    @JsonProperty("lastName")
     private String lastName;
+    @JsonProperty("phone")
     private String phone;
+    @JsonProperty("email")
     private String email;
+    @JsonProperty("profilePhotoUrl")
     private String profilePhotoUrl;
     private String department;
+    @JsonProperty("department")
     private String position;
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @JsonProperty("role")
     private Role role;
 
     @Enumerated(EnumType.STRING)
+    @JsonProperty("status")
     private Status status;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 
+    @JsonProperty("fullName")
     public String getFullName() {
         return String.format("%s %s %s", firstName, middleName, lastName);
     }
 
+    @JsonProperty("initials")
     public String getInitials() {
         return String.format("%s%s", firstName.charAt(0), lastName.charAt(0));
     }

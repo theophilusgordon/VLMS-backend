@@ -72,7 +72,7 @@ public class UserService {
         );
     }
 
-    public UserResponse updateUser(String id, UserUpdateRequest request) {
+    public User updateUser(String id, UserUpdateRequest request) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
         if(request.getFirstName() != null)
@@ -87,7 +87,7 @@ public class UserService {
             user.setProfilePhotoUrl(request.getProfilePhotoUrl());
         userRepository.save(user);
 
-        return this.buildUserResponse(user);
+        return user;
     }
 
     public void changePassword(PasswordChangeRequest request, Principal connectedUser) {
@@ -106,28 +106,24 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserResponse getUser(String id) {
-        User user = userRepository.findById(id)
+    public User getUser(String id) {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User", id));
-        return this.buildUserResponse(user);
     }
 
-    public Page<UserResponse> getUsers(int page, int size, String sort) {
+    public Page<User> getUsers(int page, int size, String sort) {
        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-         return userRepository.findAll(pageable)
-                .map(this::buildUserResponse);
+         return userRepository.findAll(pageable);
     }
 
-    public Page<UserResponse> searchHosts(String query, int page, int size, String sort) {
+    public Page<User> searchHosts(String query, int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return userRepository.findAllByRoleAndFullNameContaining(Role.HOST, query, pageable)
-                .map(this::buildUserResponse);
+        return userRepository.findAllByRoleAndFullNameContaining(Role.HOST, query, pageable);
     }
 
-    public Page<UserResponse> getHosts(int page, int size, String sort) {
+    public Page<User> getHosts(int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return userRepository.findAllByRole(Role.HOST, pageable)
-                .map(this::buildUserResponse);
+        return userRepository.findAllByRole(Role.HOST, pageable);
     }
 
     public Integer getTotalHosts(){
@@ -148,19 +144,5 @@ public class UserService {
             }
         }
         throw new IllegalArgumentException("Invalid role: " + value);
-    }
-
-    private UserResponse buildUserResponse(User user){
-        return UserResponse.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .middleName(user.getMiddleName())
-                .lastName(user.getLastName())
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .profilePhotoUrl(user.getProfilePhotoUrl())
-                .department(user.getDepartment())
-                .role(user.getRole())
-                .build();
     }
 }

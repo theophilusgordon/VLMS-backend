@@ -8,7 +8,6 @@ import com.theophilusgordon.guestlogixserver.guest.GuestRepository;
 import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
 import com.theophilusgordon.guestlogixserver.user.User;
 import com.theophilusgordon.guestlogixserver.user.UserRepository;
-import com.theophilusgordon.guestlogixserver.user.UserResponse;
 import com.theophilusgordon.guestlogixserver.utils.MailService;
 import com.theophilusgordon.guestlogixserver.utils.QRCodeService;
 import jakarta.mail.MessagingException;
@@ -159,7 +158,7 @@ public class VisitService {
                 .id(checkIn.getId())
                 .checkInDateTime(checkIn.getCheckInDateTime())
                 .checkOutDateTime(checkIn.getCheckOutDateTime())
-                .guest(GuestResponse.builder()
+                .guest(Guest.builder()
                         .id(guest.getId())
                         .firstName(guest.getFirstName())
                         .middleName(guest.getMiddleName())
@@ -168,7 +167,7 @@ public class VisitService {
                         .email(guest.getEmail())
                         .profilePhotoUrl(guest.getProfilePhotoUrl())
                         .build())
-                .host(UserResponse.builder()
+                .host(User.builder()
                         .id(host.getId())
                         .email(host.getEmail())
                         .firstName(host.getFirstName())

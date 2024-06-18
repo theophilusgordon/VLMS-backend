@@ -1,8 +1,8 @@
 package com.theophilusgordon.guestlogixserver.visit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.theophilusgordon.guestlogixserver.guest.GuestResponse;
-import com.theophilusgordon.guestlogixserver.user.UserResponse;
+import com.theophilusgordon.guestlogixserver.guest.Guest;
+import com.theophilusgordon.guestlogixserver.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +21,6 @@ public class VisitServiceResponse {
     private LocalDateTime checkInDateTime;
     @JsonProperty("checkOutDateTime")
     private LocalDateTime checkOutDateTime;
-    private GuestResponse guest;
-    private UserResponse host;
+    private Guest guest;
+    private User host;
 }
