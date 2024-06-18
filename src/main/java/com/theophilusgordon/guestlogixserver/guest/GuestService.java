@@ -25,7 +25,7 @@ public class GuestService {
             .orElseThrow(() -> new NotFoundException("Guest", "QR Code"));
     }
 
-    public GuestResponse registerGuest(GuestRegisterRequest request){
+    public Guest registerGuest(GuestRegisterRequest request){
         if(guestRepository.existsByEmail(request.getEmail()))
             throw new BadRequestException("Email already exists");
 
@@ -39,10 +39,10 @@ public class GuestService {
             .company(request.getCompany())
             .build();
         guestRepository.save(guest);
-        return this.buildGuestResponse(guest);
+        return guest;
     }
 
-    public GuestResponse updateGuest(@PathVariable String id, GuestUpdateRequest request){
+    public Guest updateGuest(@PathVariable String id, GuestUpdateRequest request){
         Guest guest = guestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Guest", id));
         if(request.getFirstName() != null)
@@ -59,41 +59,25 @@ public class GuestService {
             guest.setCompany(request.getCompany());
         guestRepository.save(guest);
 
-        return this.buildGuestResponse(guest);
+        return guest;
     }
 
-    public Page<GuestResponse> getGuests(int page, int size, String sort){
+    public Page<Guest> getGuests(int page, int size, String sort){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return guestRepository.findAll(pageable)
-                .map(this::buildGuestResponse);
+        return guestRepository.findAll(pageable);
     }
 
-    public Page<GuestResponse> searchGuests(String query, int page, int size, String sort){
+    public Page<Guest> searchGuests(String query, int page, int size, String sort){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        return guestRepository.findAllByFullNameContaining(query, pageable)
-                .map(this::buildGuestResponse);
+        return guestRepository.findAllByFullNameContaining(query, pageable);
     }
 
-    public GuestResponse getGuest(@PathVariable String id){
-        var guest =  guestRepository.findById(id)
+    public Guest getGuest(@PathVariable String id){
+        return guestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Guest", id));
-        return this.buildGuestResponse(guest);
     }
 
     public Long getTotalGuests(){
         return guestRepository.count();
-    }
-
-    private GuestResponse buildGuestResponse(Guest guest) {
-        return GuestResponse.builder()
-                .id(guest.getId())
-                .firstName(guest.getFirstName())
-                .middleName(guest.getMiddleName())
-                .lastName(guest.getLastName())
-                .email(guest.getEmail())
-                .phone(guest.getPhone())
-                .profilePhotoUrl(guest.getProfilePhotoUrl())
-                .company(guest.getCompany())
-                .build();
     }
 }

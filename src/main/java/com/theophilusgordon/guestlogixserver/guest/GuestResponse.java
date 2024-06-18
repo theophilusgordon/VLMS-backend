@@ -19,7 +19,7 @@ public class GuestResponse {
     private String middleName;
     @JsonProperty("lastName")
     private String lastName;
-    @JsonProperty
+    @JsonProperty("fullName")
     private String fullName;
     @JsonProperty("email")
     private String email;
