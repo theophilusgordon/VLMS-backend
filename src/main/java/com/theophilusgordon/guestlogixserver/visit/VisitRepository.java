@@ -5,22 +5,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface VisitRepository extends JpaRepository<Visit, Integer> {
-    Iterable<Visit> findByGuestId(String guestId);
-    Iterable<Visit> findByHostId(String hostId);
+    List<Visit> findByGuestId(String guestId);
+    List<Visit> findByHostId(String hostId);
     
-    Iterable<Visit> findByCheckInDateTime(LocalDateTime checkIn);
+    List<Visit> findByCheckInDateTime(LocalDateTime checkIn);
 
-    Iterable<Visit> findByCheckInDateTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<Visit> findByCheckInDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
-    Iterable<Visit> findByHostIdAndCheckInDateTimeBetween(String hostId, LocalDateTime start, LocalDateTime end);
+    List<Visit> findByHostIdAndCheckInDateTimeBetween(String hostId, LocalDateTime start, LocalDateTime end);
 
     Long countByCheckInDateTimeEquals(LocalDateTime checkInDateTime);
     Long countByCheckInDateTimeIsNotNullAndCheckOutDateTimeIsNull();
 
     @Query("SELECT c FROM Visit c WHERE c.checkOutDateTime IS NULL")
-    Iterable<Visit> findCurrentGuests();
+    List<Visit> findCurrentGuests();
 
     @Query("SELECT COUNT(c) FROM Visit c WHERE c.checkInDateTime BETWEEN :startOfWeek AND :endOfWeek")
     Long countByCheckinDateBetweenThisWeek(@Param("startOfWeek") LocalDateTime startOfWeek, @Param("endOfWeek") LocalDateTime endOfWeek);

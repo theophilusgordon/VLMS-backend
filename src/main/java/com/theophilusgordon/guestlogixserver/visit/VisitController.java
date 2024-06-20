@@ -4,6 +4,7 @@ import com.google.zxing.WriterException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +31,8 @@ public class VisitController {
 
     @Operation(summary = "Get all visits", description = "Get all visits")
     @GetMapping
-    public ResponseEntity<Iterable<VisitResponse>> getCheckIns(
-        @RequestParam int page,
-        @RequestParam int size,
-        @RequestParam String sort,
-        @RequestParam(required = false) String query,
-        @RequestParam(required = false) String filter
-    ) {
-        return ResponseEntity.ok(visitService.getCheckIns(page, size));
+    public ResponseEntity<Iterable<VisitResponse>> getCheckIns(Pageable pageable) {
+        return ResponseEntity.ok(visitService.getCheckIns(pageable));
     }
 
     @Operation(summary = "Get a visit", description = "Get a visit by ID")
