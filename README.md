@@ -1,4 +1,4 @@
-# Visitors Logbook Management System
+# Visitors Logbook Management System (backend)
 
 The Visitors Logbook Management System is an automated monitoring system designed to track visitors to an organization's premises, providing accurate and reliable reports to management. This system includes modules for guest registration, host management, and administrative functions.
 
@@ -29,7 +29,7 @@ The objective of this project is to create an efficient and user-friendly system
 
 ### Installation
 
-1. Clone the repository: `git clone https://github.com/your/repository.git`
+1. Clone the repository: `git clone https://github.com/theophilusgordon/VLMS-backend.git`
 2. Navigate to the project directory: `cd VLMS-backend`
 3. Run application through docker: `docker compose up -d`
 
