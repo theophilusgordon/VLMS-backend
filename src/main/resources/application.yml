@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/guest-logix-db
+    url: jdbc:postgresql://localhost:5432/vlms-db
     username: gordon
     password: password
   jpa:
@@ -23,10 +23,9 @@ spring:
     password: ${MAIL_PASSWORD}
     properties:
       mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+        "mail.transport.protocol": smtp
+        "mail.smtp.auth": true
+        "mail.smtp.starttls.enable": true
         mime:
           charset: UTF-8
 

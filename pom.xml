@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.2.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.theophilusgordon</groupId>
@@ -95,8 +95,8 @@
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>1.12.261</version>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.12.728</version>
         </dependency>
         <dependency>
             <groupId>com.google.zxing</groupId>
