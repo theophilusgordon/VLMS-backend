@@ -1,6 +1,6 @@
-# Guest Logix Server
+# Visitors Logbook Management System
 
-The Guest Logix is an automated monitoring system designed to track visitors to an organization's premises, providing accurate and reliable reports to management. This system includes modules for guest registration, host management, and administrative functions.
+The Visitors Logbook Management System is an automated monitoring system designed to track visitors to an organization's premises, providing accurate and reliable reports to management. This system includes modules for guest registration, host management, and administrative functions.
 
 ## Project Objective
 
@@ -30,7 +30,7 @@ The objective of this project is to create an efficient and user-friendly system
 ### Installation
 
 1. Clone the repository: `git clone https://github.com/your/repository.git`
-2. Navigate to the project directory: `cd guest-logix-server`
+2. Navigate to the project directory: `cd VLMS-backend`
 3. Run application through docker: `docker compose up -d`
 
 ### Usage
