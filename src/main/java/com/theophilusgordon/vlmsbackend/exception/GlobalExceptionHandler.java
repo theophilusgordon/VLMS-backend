@@ -1,6 +1,6 @@
 package com.theophilusgordon.vlmsbackend.exception;
 
-import com.theophilusgordon.vlmsbackend.constants.ErrorConstants;
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setMessage(ErrorConstants.BAD_CREDENTIALS);
+        errorResponse.setMessage(ExceptionConstants.BAD_CREDENTIALS);
         errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }

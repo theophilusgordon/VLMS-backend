@@ -1,8 +1,9 @@
 package com.theophilusgordon.vlmsbackend.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.theophilusgordon.vlmsbackend.jwt.JwtService;
+import com.theophilusgordon.vlmsbackend.security.jwt.JwtService;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
+import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
 import com.theophilusgordon.vlmsbackend.token.TokenService;
 import com.theophilusgordon.vlmsbackend.user.Status;
 import com.theophilusgordon.vlmsbackend.utils.MailService;
@@ -31,6 +32,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
     private final TokenService tokenService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
         User invitedUser = repository.findByEmail(request.getEmail())
@@ -62,36 +64,36 @@ public class AuthenticationService {
                 .build();
     }
 
-public AuthenticationResponse authenticate(AuthenticationRequest request) {
-    try {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-    } catch (BadRequestException e) {
-        throw new BadRequestException("Invalid email or password");
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (BadRequestException e) {
+            throw new BadRequestException("Invalid email or password");
+        }
+
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if(user.getStatus() != Status.ACTIVE)
+            throw new BadRequestException("User is not active");
+
+        revokeAllUserTokens(user);
+
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+
+        tokenService.saveUserToken(user, jwtToken);
+
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
     }
-
-    var user = repository.findByEmail(request.getEmail())
-            .orElseThrow(() -> new BadRequestException("User not found"));
-
-    if(user.getStatus() != Status.ACTIVE)
-        throw new BadRequestException("User is not active");
-
-    revokeAllUserTokens(user);
-
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-
-    tokenService.saveUserToken(user, jwtToken);
-
-    return AuthenticationResponse.builder()
-            .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-            .build();
-}
 
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
@@ -119,7 +121,7 @@ public AuthenticationResponse authenticate(AuthenticationRequest request) {
         if (userEmail != null) {
             var user = this.repository.findByEmail(userEmail)
                     .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user)) {
+            if (jwtService.isTokenValid(refreshToken, user.getId())) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 tokenService.saveUserToken(user, accessToken);

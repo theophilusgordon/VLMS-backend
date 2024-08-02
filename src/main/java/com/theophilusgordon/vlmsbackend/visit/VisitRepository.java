@@ -6,16 +6,17 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public interface VisitRepository extends JpaRepository<Visit, Integer> {
     List<Visit> findByGuestId(String guestId);
-    List<Visit> findByHostId(String hostId);
+    List<Visit> findByHostId(UUID hostId);
     
     List<Visit> findByCheckInDateTime(LocalDateTime checkIn);
 
     List<Visit> findByCheckInDateTimeBetween(LocalDateTime start, LocalDateTime end);
 
-    List<Visit> findByHostIdAndCheckInDateTimeBetween(String hostId, LocalDateTime start, LocalDateTime end);
+    List<Visit> findByHostIdAndCheckInDateTimeBetween(UUID hostId, LocalDateTime start, LocalDateTime end);
 
     Long countByCheckInDateTimeEquals(LocalDateTime checkInDateTime);
     Long countByCheckInDateTimeIsNotNullAndCheckOutDateTimeIsNull();

@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -38,7 +39,7 @@ public class VisitService {
         checkin.setCheckInDateTime(LocalDateTime.now());
         Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
         checkin.setGuest(guest);
-        User host = hostRepository.findById(request.getHostId()).orElseThrow(() -> new NotFoundException("User", request.getHostId()));
+        User host = hostRepository.findById(UUID.fromString(request.getHostId())).orElseThrow(() -> new NotFoundException("User", request.getHostId()));
         checkin.setHost(host);
         checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
         checkInRepository.save(checkin);
@@ -90,10 +91,10 @@ public class VisitService {
     }
 
     public List<VisitResponse> getCheckInsByHost(String hostId) {
-        if(!hostRepository.existsById(hostId))
+        if(!hostRepository.existsById(UUID.fromString(hostId)))
             throw new NotFoundException("Host", hostId);
 
-        List<Visit> checkIns = checkInRepository.findByHostId(hostId);
+        List<Visit> checkIns = checkInRepository.findByHostId(UUID.fromString(hostId));
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
                 .toList();
@@ -121,11 +122,11 @@ public class VisitService {
     }
 
     public List<VisitResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
-        if(!hostRepository.existsById(hostId))
+        if(!hostRepository.existsById(UUID.fromString(hostId)))
             throw new NotFoundException("Host", hostId);
 
         Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
-        var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, dates.getFirst(), dates.getSecond());
+        var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(UUID.fromString(hostId), dates.getFirst(), dates.getSecond());
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost())).
                 toList();

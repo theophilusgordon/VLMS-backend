@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface TokenRepository extends JpaRepository<Token, String> {
     @Query(value = """
@@ -12,7 +13,7 @@ public interface TokenRepository extends JpaRepository<Token, String> {
       on t.user.id = u.id\s
       where u.id = :id and (t.expired = false or t.revoked = false)\s
       """)
-    List<Token> findAllValidTokenByUser(String id);
+    List<Token> findAllValidTokenByUser(UUID id);
 
     Optional<Token> findByToken(String token);
 }

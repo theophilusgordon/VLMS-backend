@@ -1,11 +1,13 @@
 package com.theophilusgordon.vlmsbackend.user;
 
+import com.theophilusgordon.vlmsbackend.constants.AuthConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "Invite a user", description = "Invite a user as host")
+    @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @PostMapping("/invite")
     public ResponseEntity<UserInviteResponse> inviteUser(@RequestBody UserInviteRequest request) throws MessagingException {
         return ResponseEntity.ok(userService.inviteUser(request));
@@ -26,7 +29,7 @@ public class UserController {
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(@RequestBody PasswordRequestResetRequest request) throws MessagingException {
-        userService.forgotPassword(request.getEmail());
+        userService.requestResetPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
@@ -61,6 +64,7 @@ public class UserController {
     }
 
     @Operation(summary = "Get user", description = "Get user by ID")
+    @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable String id) {
         return ResponseEntity.ok(userService.getUser(id));
@@ -74,12 +78,15 @@ public class UserController {
     }
 
     @Operation(summary = "Get hosts", description = "Get all hosts paginated. Default page is 1 and default size is 10")
+    @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/hosts")
     public ResponseEntity<Page<User>> getHosts(Pageable pageable) {
         Page<User> hosts = userService.getHosts(pageable);
         return ResponseEntity.ok(hosts);
     }
 
+    @Operation(summary = "Search hosts", description = "Search hosts by full name")
+    @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/hosts/search")
     public ResponseEntity<Page<User>> searchHosts(
             Pageable pageable,
@@ -90,6 +97,7 @@ public class UserController {
     }
 
     @Operation(summary = "Delete user", description = "Delete user by ID")
+    @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);

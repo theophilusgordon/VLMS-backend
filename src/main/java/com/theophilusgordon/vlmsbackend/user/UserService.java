@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.user;
 
+import com.theophilusgordon.vlmsbackend.constants.MailConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.utils.MailService;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,28 +35,28 @@ public class UserService {
         mailService.sendInvitationMail(
                 user.getEmail(),
                 "Invitation to Join Guest Logix as a Host",
-                savedUser.getId()
+                String.valueOf(savedUser.getId())
         );
         return UserInviteResponse.builder()
-                .id(savedUser.getId())
+                .id(String.valueOf(savedUser.getId()))
                 .email(savedUser.getEmail())
                 .role(String.valueOf(savedUser.getRole()))
                 .status(Status.INVITED)
                 .build();
     }
 
-    public void forgotPassword(String email) throws MessagingException {
+    public void requestResetPassword(String email) throws MessagingException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
         mailService.sendForgotPasswordMail(
                 user.getEmail(),
-                "Password Reset Request for Your Guest Logix Account",
-                user.getId()
+                MailConstants.REQUEST_RESET_PASSWORD_SUBJECT,
+                String.valueOf(user.getId())
         );
     }
 
     public void resetPassword(String id, PasswordResetRequest request) throws MessagingException {
-        var user = userRepository.findById(id)
+        var user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("User", id));
 
         if (!request.getPassword().equals(request.getConfirmPassword())) {
@@ -71,7 +73,7 @@ public class UserService {
     }
 
     public User updateUser(String id, UserUpdateRequest request) {
-        var user = userRepository.findById(id)
+        var user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("User", id));
         userRepository.save(UserMapper.userUpdateRequestToUser(user, request));
         return user;
@@ -94,7 +96,7 @@ public class UserService {
     }
 
     public User getUser(String id) {
-        return userRepository.findById(id)
+        return userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("User", id));
     }
 
@@ -115,10 +117,10 @@ public class UserService {
     }
 
     public void deleteUser(String id) {
-        if (!userRepository.existsById(id)) {
+        if (!userRepository.existsById(UUID.fromString(id))) {
             throw new NotFoundException("User", id);
         }
-        userRepository.deleteById(id);
+        userRepository.deleteById(UUID.fromString(id));
     }
 
     private Role createRole(String value) {

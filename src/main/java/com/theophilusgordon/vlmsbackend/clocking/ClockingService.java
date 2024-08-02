@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class ClockingService {
         clocking.setWorkLocation(createWorkLocation(clockInRequest.getWorkLocation()));
         clocking.setClockInDateTime(LocalDateTime.now());
         clockingRepository.save(clocking);
-        User user = userRepository.findById(clockInRequest.getUserId())
+        User user = userRepository.findById(UUID.fromString(clockInRequest.getUserId()))
                 .orElseThrow(() -> new NotFoundException("User", clockInRequest.getUserId()));
 
         return this.buildClockingResponse(clocking, user);
@@ -30,7 +31,7 @@ public class ClockingService {
         Clocking clocking = clockingRepository.findById(clockOutRequest.getClockingId()).orElseThrow(() -> new NotFoundException("Clocking", String.valueOf(clockOutRequest.getClockingId())));
         clocking.setClockOutDateTime(LocalDateTime.now());
         clockingRepository.save(clocking);
-        User user = userRepository.findById(clocking.getUserId())
+        User user = userRepository.findById(UUID.fromString(clocking.getUserId()))
                 .orElseThrow(() -> new NotFoundException("User", clocking.getUserId()));
 
         return this.buildClockingResponse(clocking, user);

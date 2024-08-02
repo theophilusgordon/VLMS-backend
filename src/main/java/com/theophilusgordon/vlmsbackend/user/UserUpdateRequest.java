@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.user;
 
+import com.theophilusgordon.vlmsbackend.constants.Patterns;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.Setter;
         private String middleName;
         @Size(max = 50, message = "Last name must be less than 50 characters")
         private String lastName;
-        @Pattern(regexp = "^\\+?[0-9. ()-]{10,25}$", message = "Phone number is not valid")
+        @Pattern(regexp = Patterns.PHONE_NUMBER_PATTERN, message = "Phone number is not valid")
         private String phone;
         private String profilePhotoUrl;
 }

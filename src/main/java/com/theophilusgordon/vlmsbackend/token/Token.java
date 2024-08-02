@@ -2,12 +2,10 @@ package com.theophilusgordon.vlmsbackend.token;
 
 import com.theophilusgordon.vlmsbackend.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +16,7 @@ public class Token {
     @GeneratedValue
     public Integer id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 512)
     public String token;
 
     @Enumerated(EnumType.STRING)

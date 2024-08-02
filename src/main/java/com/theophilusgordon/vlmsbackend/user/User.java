@@ -5,11 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,12 +16,12 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
-    private String id;
+    private UUID id;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -32,6 +30,7 @@ public class User implements UserDetails {
     private String profilePhotoUrl;
     private String department;
     private String position;
+    @Getter
     @JsonIgnore
     private String password;
 
@@ -56,43 +55,39 @@ public class User implements UserDetails {
     }
 
     @JsonIgnore
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.getAuthorities();
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @JsonIgnore
-    @Override
     public String getUsername() {
         return email;
     }
 
     @JsonIgnore
-    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @JsonIgnore
-    @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @JsonIgnore
-    @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @JsonIgnore
-    @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
