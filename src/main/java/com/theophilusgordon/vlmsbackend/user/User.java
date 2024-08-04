@@ -30,6 +30,7 @@ public class User {
     private String profilePhotoUrl;
     private String department;
     private String position;
+    private Boolean accountLocked = false;
     @Getter
     @JsonIgnore
     private String password;
@@ -66,7 +67,7 @@ public class User {
 
     @JsonIgnore
     public boolean isAccountNonLocked() {
-        return true;
+        return !accountLocked;
     }
 
     @JsonIgnore

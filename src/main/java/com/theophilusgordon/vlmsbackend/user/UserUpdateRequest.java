@@ -17,7 +17,7 @@ import lombok.Setter;
         private String middleName;
         @Size(max = 50, message = "Last name must be less than 50 characters")
         private String lastName;
-        @Pattern(regexp = Patterns.PHONE_NUMBER_PATTERN, message = "Phone number is not valid")
+        @Pattern(regexp = Patterns.PHONE_NUMBER, message = "Phone number is not valid")
         private String phone;
         private String profilePhotoUrl;
 }

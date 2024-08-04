@@ -1,7 +1,9 @@
 package com.theophilusgordon.vlmsbackend.user;
 
-import jakarta.validation.constraints.Email;
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
+import com.theophilusgordon.vlmsbackend.constants.Patterns;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,6 @@ import lombok.Setter;
 @Builder
 public class PasswordRequestResetRequest {
     @NotBlank(message = "Email is required")
-    @Email
+    @Pattern(regexp = Patterns.EMAIL, message = ExceptionConstants.INVALID_EMAIL)
     private String email;
 }

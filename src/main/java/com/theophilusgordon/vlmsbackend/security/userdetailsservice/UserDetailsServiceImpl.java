@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.security.userdetailsservice;
 
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -19,16 +20,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println("email = " + email);
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionConstants.USER_NOT_FOUND));
         return new UserDetailsImpl(user);
     }
 
     @Transactional
     public UserDetails loadUserById(UUID id) throws UsernameNotFoundException {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionConstants.USER_NOT_FOUND));
         return new UserDetailsImpl(user);
     }
 }

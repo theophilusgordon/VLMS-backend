@@ -21,11 +21,11 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @Operation(summary = "Register a new user", description = "Register a new user with an invite")
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    @PostMapping("/activate-account")
+    public ResponseEntity<AuthenticationResponse> activateAccount(
             @RequestBody RegisterRequest request
     ) throws MessagingException {
-        return ResponseEntity.ok(service.register(request));
+        return ResponseEntity.ok(service.activateAccount(request));
     }
 
     @Operation(summary = "Authenticate a user", description = "Authenticate a user")

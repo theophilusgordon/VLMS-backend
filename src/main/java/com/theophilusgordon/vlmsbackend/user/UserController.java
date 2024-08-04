@@ -3,6 +3,7 @@ package com.theophilusgordon.vlmsbackend.user;
 import com.theophilusgordon.vlmsbackend.constants.AuthConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,27 +23,27 @@ public class UserController {
     @Operation(summary = "Invite a user", description = "Invite a user as host")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @PostMapping("/invite")
-    public ResponseEntity<UserInviteResponse> inviteUser(@RequestBody UserInviteRequest request) throws MessagingException {
+    public ResponseEntity<UserInviteResponse> inviteUser(@RequestBody @Valid UserInviteRequest request) throws MessagingException {
         return ResponseEntity.ok(userService.inviteUser(request));
     }
 
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
-    public ResponseEntity<Void> forgotPassword(@RequestBody PasswordRequestResetRequest request) throws MessagingException {
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid PasswordRequestResetRequest request) throws MessagingException {
         userService.requestResetPassword(request.getEmail());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Reset password", description = "Reset password for user")
     @PatchMapping("/reset-password/{id}")
-    public ResponseEntity<Void> resetPassword(@PathVariable String id, @RequestBody PasswordResetRequest request) throws MessagingException {
+    public ResponseEntity<Void> resetPassword(@PathVariable String id, @RequestBody @Valid PasswordResetRequest request) throws MessagingException {
         userService.resetPassword(id, request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update user", description = "Update user information")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody @Valid UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 

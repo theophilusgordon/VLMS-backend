@@ -3,6 +3,8 @@ package com.theophilusgordon.vlmsbackend.security.jwt;
 import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsImpl;
 import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -71,7 +73,7 @@ public class JwtService {
 
         extraClaims.put("full_name", user.getFullName());
         extraClaims.put("role", authorities);
-        String token = Jwts
+        return Jwts
                 .builder()
                 .header()
                 .add("typ", "JWT")
@@ -87,8 +89,6 @@ public class JwtService {
                 .issuer("VLMS API")
                 .subject(user.getEmail())
                 .compact();
-        System.out.println("Token: " + token.length());
-        return token;
     }
 
 
@@ -97,9 +97,9 @@ public class JwtService {
 //        return (username.equals(user.getUsername())) && !isTokenExpired(token);
 //    }
 
-    public boolean isTokenValid(String token, UUID tokenUser) {
-        final UUID userID = extractUserId(token);
-        return (userID.equals(tokenUser)) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

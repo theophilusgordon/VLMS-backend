@@ -1,15 +1,13 @@
 package com.theophilusgordon.vlmsbackend.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ErrorResponse {
+@Builder
+public class ExceptionResponse {
     private String message;
     private int status;
 }

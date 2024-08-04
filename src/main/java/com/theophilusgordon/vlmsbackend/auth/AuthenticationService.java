@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class AuthenticationService {
     private final TokenService tokenService;
     private final UserDetailsServiceImpl userDetailsService;
 
-    public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
+    public AuthenticationResponse activateAccount(RegisterRequest request) throws MessagingException {
         User invitedUser = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException(String.format("User with email: %s not found. You need to be invited by the administrator to register.", request.getEmail())));
 
@@ -119,9 +120,10 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
             var user = this.repository.findByEmail(userEmail)
                     .orElseThrow();
-            if (jwtService.isTokenValid(refreshToken, user.getId())) {
+            if (jwtService.isTokenValid(refreshToken, userDetails)) {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 tokenService.saveUserToken(user, accessToken);

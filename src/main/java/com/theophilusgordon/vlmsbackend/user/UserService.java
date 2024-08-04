@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.user;
 
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.constants.MailConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
@@ -25,7 +26,7 @@ public class UserService {
 
     public UserInviteResponse inviteUser(UserInviteRequest request) throws MessagingException {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(request.getEmail())))
-            throw new BadRequestException(String.format("User with email: %s already exists", request.getEmail()));
+            throw new BadRequestException(ExceptionConstants.USER_ALREADY_EXISTS + request.getEmail());
 
         var user = User.builder()
                 .email(request.getEmail())
@@ -34,7 +35,7 @@ public class UserService {
         var savedUser = userRepository.save(user);
         mailService.sendInvitationMail(
                 user.getEmail(),
-                "Invitation to Join Guest Logix as a Host",
+                MailConstants.INVITATION_SUBJECT,
                 String.valueOf(savedUser.getId())
         );
         return UserInviteResponse.builder()
@@ -60,14 +61,14 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User", id));
 
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new BadRequestException("Passwords do not match");
+            throw new BadRequestException(ExceptionConstants.PASSWORDS_MISMATCH);
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         mailService.sendPasswordResetSuccessMail(
                 user.getEmail(),
-                "Password Reset Successful",
+                MailConstants.PASSWORD_RESET_SUCCESS_SUBJECT,
                 user.getFullName()
         );
     }
@@ -84,10 +85,10 @@ public class UserService {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new BadRequestException("Wrong password");
+            throw new BadRequestException(ExceptionConstants.INCORRECT_PASSWORD);
         }
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new BadRequestException("Password are not the same");
+            throw new BadRequestException(ExceptionConstants.PASSWORDS_MISMATCH);
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));

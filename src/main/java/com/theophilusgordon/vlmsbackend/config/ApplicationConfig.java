@@ -2,6 +2,8 @@ package com.theophilusgordon.vlmsbackend.config;
 
 import com.theophilusgordon.vlmsbackend.auditing.ApplicationAuditAware;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
