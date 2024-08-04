@@ -37,7 +37,7 @@ public class VisitService {
     public VisitResponse checkIn(VisitRequest request) throws IOException, WriterException, MessagingException {
         var checkin = new Visit();
         checkin.setCheckInDateTime(LocalDateTime.now());
-        Guest guest = guestRepository.findById(request.getGuestId()).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
+        Guest guest = guestRepository.findById(UUID.fromString(request.getGuestId())).orElseThrow(() -> new NotFoundException("Guest", request.getGuestId()));
         checkin.setGuest(guest);
         User host = hostRepository.findById(UUID.fromString(request.getHostId())).orElseThrow(() -> new NotFoundException("User", request.getHostId()));
         checkin.setHost(host);
@@ -81,7 +81,7 @@ public class VisitService {
     }
 
     public List<VisitResponse> getCheckInsByGuest(String guestId) {
-        if(!guestRepository.existsById(guestId))
+        if(!guestRepository.existsById(UUID.fromString(guestId)))
             throw new NotFoundException("Guest", guestId);
 
         List<Visit> checkIns = checkInRepository.findByGuestId(guestId);

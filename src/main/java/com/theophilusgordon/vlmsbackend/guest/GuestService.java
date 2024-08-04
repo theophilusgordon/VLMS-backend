@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class GuestService {
@@ -38,7 +40,7 @@ public class GuestService {
     }
 
     public Guest getGuest(@PathVariable String id){
-        return guestRepository.findById(id)
+        return guestRepository.findById(UUID.fromString(id))
             .orElseThrow(() -> new NotFoundException("Guest", id));
     }
 

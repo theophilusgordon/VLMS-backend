@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Builder
@@ -15,7 +17,7 @@ public class Guest {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     @JsonProperty("id")
-    private String id;
+    private UUID id;
     @JsonProperty("firstName")
     private String firstName;
     @JsonProperty("middleName")
