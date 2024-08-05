@@ -1,6 +1,6 @@
 package com.theophilusgordon.vlmsbackend.config;
 
-import com.theophilusgordon.vlmsbackend.security.jwt.JwtAuthenticationFilter;
+import com.theophilusgordon.vlmsbackend.security.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -36,7 +36,7 @@ public class SecurityConfig {
             "/api/v1/users/forgot-password",
     };
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 

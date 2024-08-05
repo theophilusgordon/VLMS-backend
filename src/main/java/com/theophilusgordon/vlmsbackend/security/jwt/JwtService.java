@@ -1,9 +1,5 @@
 package com.theophilusgordon.vlmsbackend.security.jwt;
 
-import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsImpl;
-import com.theophilusgordon.vlmsbackend.user.User;
-import com.theophilusgordon.vlmsbackend.user.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,17 +20,12 @@ import javax.crypto.SecretKey;
 @Service
 public class JwtService {
 
-    private final UserRepository userRepository;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
-
-    public JwtService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -45,57 +36,43 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(User user) {
-        return generateToken(new HashMap<>(), user);
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     public String generateToken(
             Map<String, Object> extraClaims,
-            User user
+            UserDetails userDetails
     ) {
-        return buildToken(extraClaims, user.getEmail());
+        return buildToken(extraClaims, userDetails, jwtExpiration);
     }
+
 
     public String generateRefreshToken(
-            User user
+            UserDetails userDetails
     ) {
-        return buildToken(new HashMap<>(), user.getEmail());
+        return buildToken(new HashMap<>(), userDetails, jwtExpiration);
     }
 
-    public String buildToken(Map<String, Object> extraClaims, String email) {
-//        TODO: refactor orElseThrow to handle exception
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        List<String> authorities = new UserDetailsImpl(user).getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
+    public String buildToken(Map<String, Object> extraClaims,
+                             UserDetails userDetails,
+                             long expiration) {
+        var authorities = userDetails.getAuthorities()
+                .stream().
+                map(GrantedAuthority::getAuthority)
                 .toList();
 
-        extraClaims.put("full_name", user.getFullName());
-        extraClaims.put("role", authorities);
         return Jwts
                 .builder()
-                .header()
-                .add("typ", "JWT")
-                .add("alg", "HS256")
-                .and()
-                .signWith(getSignInKey())
-                .claim("user_id", user.getId())
                 .claims(extraClaims)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .audience().add("vlms.theophilusgordon.com")
-                .and()
-                .issuer("VLMS API")
-                .subject(user.getEmail())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .claim("authorities", authorities)
+                .signWith(getSignInKey())
                 .compact();
     }
 
-
-//    public boolean isTokenValid(String token, User user) {
-//        final String username = extractUsername(token);
-//        return (username.equals(user.getUsername())) && !isTokenExpired(token);
-//    }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -104,10 +81,6 @@ public class JwtService {
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
-    }
-
-    public UUID extractUserId(String token) {
-        return UUID.fromString(extractClaim(token, claims -> claims.get("user_id", String.class)));
     }
 
     private Date extractExpiration(String token) {

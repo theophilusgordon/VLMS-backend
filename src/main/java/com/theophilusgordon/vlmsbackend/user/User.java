@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.security.Principal;
+import java.util.*;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
-public class User {
+public class User implements UserDetails, Principal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -55,7 +58,12 @@ public class User {
         return String.format("%s%s", firstName.charAt(0), lastName.charAt(0));
     }
 
-    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
+    }
+
+    @Override
     public String getUsername() {
         return email;
     }
@@ -90,5 +98,11 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    @JsonIgnore
+    public String getName() {
+        return email;
     }
 }

@@ -84,7 +84,7 @@ public class VisitService {
         if(!guestRepository.existsById(UUID.fromString(guestId)))
             throw new NotFoundException("Guest", guestId);
 
-        List<Visit> checkIns = checkInRepository.findByGuestId(guestId);
+        List<Visit> checkIns = checkInRepository.findByGuestId(UUID.fromString(guestId));
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
                 .toList();

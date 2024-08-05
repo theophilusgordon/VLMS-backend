@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface VisitRepository extends JpaRepository<Visit, Integer> {
-    List<Visit> findByGuestId(String guestId);
+    List<Visit> findByGuestId(UUID guestId);
     List<Visit> findByHostId(UUID hostId);
     
     List<Visit> findByCheckInDateTime(LocalDateTime checkIn);
