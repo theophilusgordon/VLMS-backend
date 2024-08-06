@@ -44,17 +44,15 @@ public class VisitService {
         checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
         checkInRepository.save(checkin);
 
-        emailService.sendCheckinSuccessMail(
+        emailService.sendCheckinSuccessEmail(
                 guest.getEmail(),
-                "Successful Check-In at GordTex - Your QR Code for Future Visits",
-                guest.getFullName(),
+                "Successful Check-In at VLMS - Your QR Code for Future Visits",
                 checkin.getQrCode()
         );
 
-        emailService.sendCheckinNotificationMail(
+        emailService.sendCheckinNotificationEmail(
                 host.getEmail(),
-                "Your Guest Has Arrived",
-                host.getFullName(),
+                host.getFirstName(),
                 guest,
                 checkin.getCheckInDateTime()
         );

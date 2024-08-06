@@ -43,7 +43,7 @@
     <header>
         <h3 th:text="${subject}">You have been invited to join the VLMS.</h3>
     </header>
-        <p>Dear User,</p>
+        <p>Dear <span th:text="${firstname}">User</span>,</p>
         <p>
             You have been invited to join VLMS, a visitor management system that
             helps you manage your visitors efficiently and keep track of visitor activities in real-time.

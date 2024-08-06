@@ -8,11 +8,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -63,142 +61,63 @@ public class EmailService {
         sendEmail(emailDetails);
     }
 
-
-
     @Async
-    public void sendSignupSuccessMail(String to, String subject, String username) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
+    public void sendRequestPasswordResetEmail(String recipient, String otp) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.REQUEST_PASSWORD_RESET)
+                .subject("Reset your password")
+                .otp(otp)
+                .resetPasswordUrl(frontendUrl + "/reset-password")
+                .build();
 
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "signup-success-mail-template"
-        );
-
-        context.setVariable("subject", subject);
-        context.setVariable("username", username);
-
-        mailSender.send(mimeMessage);
-    }
-
-    public void sendForgotPasswordMail(String to,
-                                       String subject,
-                                       String userId
-    ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
-
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "forgot-password-mail-template"
-        );
-
-        String resetPasswordUrl = frontendUrl + "/reset-password/" + userId;
-
-        context.setVariable("subject", subject);
-        context.setVariable("resetPasswordUrl", resetPasswordUrl);
-
-        mailSender.send(mimeMessage);
+        sendEmail(emailDetails);
     }
 
     @Async
-    public void sendPasswordResetSuccessMail(String to,
-                                             String subject,
-                                             String username
-    ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
+    public void sendPasswordResetSuccessEmail(String recipient) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.REQUEST_PASSWORD_RESET)
+                .subject("Password reset successful")
+                .loginUrl(frontendUrl + "/login")
+                .build();
 
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "password-reset-success-mail-template"
-        );
-
-        context.setVariable("subject", subject);
-        context.setVariable("username", username);
-
-        mailSender.send(mimeMessage);
+        sendEmail(emailDetails);
     }
 
     @Async
-    public void sendCheckinNotificationMail(String to,
-                                            String subject,
-                                            String hostname,
-                                            Guest guest,
-                                            LocalDateTime checkinTime
-    ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
+    public void sendCheckinNotificationEmail(String recipient,
+                                             String hostName,
+                                             Guest guest,
+                                             LocalDateTime checkInTime) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.CHECKIN_NOTIFICATION)
+                .subject("Password reset successful")
+                .hostName(hostName)
+                .guestName(guest.getFullName())
+                .guestPhone(guest.getPhone())
+                .guestCompany(guest.getCompany())
+                .checkInTime(checkInTime)
+                .build();
 
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "checkin-notification-mail-template"
-        );
-
-        context.setVariable("subject", subject);
-        context.setVariable("guest", guest);
-        context.setVariable("hostname", hostname);
-        context.setVariable("checkinTime", checkinTime);
-
-        mailSender.send(mimeMessage);
+        sendEmail(emailDetails);
     }
 
-    public void sendCheckinSuccessMail(String to,
-                                       String subject,
-                                       String guestName,
-                                       byte[] attachment
-    ) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+    @Async
+    public void sendCheckinSuccessEmail(String recipient,
+                                        String guestName,
+                                        byte[] qrCode) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.CHECKIN_SUCCESS)
+                .subject("Check-in successful")
+                .guestName(guestName)
+                .qrCode(qrCode)
+                .build();
 
-        mimeMessageHelper.setFrom(from);
-        mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
-
-        Context context = new Context();
-        context.setVariable("subject", subject);
-        context.setVariable("guestName", guestName);
-
-        String htmlContent = templateEngine.process("guest-checkin-success-mail-template", context);
-        mimeMessageHelper.setText(htmlContent, true);
-
-        ByteArrayResource file = new ByteArrayResource(attachment);
-        mimeMessageHelper.addAttachment("QRCode.png", file);
-
-        mailSender.send(mimeMessage);
-    }
-
-    private void configureMimeMessageHelper(
-            MimeMessage mimeMessage,
-            String to,
-            String from,
-            String subject,
-            Context context,
-            String template
-    ) throws MessagingException {
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-        mimeMessageHelper.setFrom(from);
-        mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
-
-        String htmlContent = templateEngine.process(template, context);
-        mimeMessageHelper.setText(htmlContent, true);
+        sendEmail(emailDetails);
     }
 
     private void sendEmail(EmailDetails emailDetails) {
@@ -236,10 +155,16 @@ public class EmailService {
         properties.put("recipient", emailDetails.getRecipient());
         properties.put("otp", emailDetails.getOtp());
         properties.put("confirmationUrl", emailDetails.getActivationUrl());
-        properties.put("type", emailDetails.getType());
         properties.put("actor", emailDetails.getName());
-        properties.put("reason", emailDetails.getReason());
-        properties.put("date", emailDetails.getDate());
+        properties.put("activationUrl", emailDetails.getActivationUrl());
+        properties.put("loginUrl", emailDetails.getLoginUrl());
+        properties.put("resetPasswordUrl", emailDetails.getResetPasswordUrl());
+        properties.put("hostName", emailDetails.getHostName());
+        properties.put("guestName", emailDetails.getGuestName());
+        properties.put("checkInTime", emailDetails.getCheckInTime());
+        properties.put("qrCode", emailDetails.getQrCode());
+        properties.put("guestPhone", emailDetails.getGuestPhone());
+        properties.put("guestCompany", emailDetails.getGuestCompany());
 
         Context context = new Context();
         context.setVariables(properties);

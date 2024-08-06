@@ -38,8 +38,7 @@
 <header>
     <h3 th:text="${subject}">Welcome to ViLog! Your Account Setup is Complete</h3>
 </header>
-<p>Dear User,</p>
-
+    <p>Dear <span th:text="${firstname}">User</span>,</p>
 <p>
     Congratulations and welcome to Guest Logix! We are delighted to inform you that
     your account activation was successful. You can now login to your account.

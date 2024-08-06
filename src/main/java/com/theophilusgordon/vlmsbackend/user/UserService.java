@@ -40,7 +40,6 @@ public class UserService {
                 .status(Status.INVITED)
                 .build();
         var savedUser = userRepository.save(user);
-        System.out.println("saved user: " + savedUser.getStatus());
         var otp = generateAndSaveActivationToken(user);
         emailService.sendActivationEmail(
                 user.getEmail(),
@@ -57,10 +56,11 @@ public class UserService {
     public void requestResetPassword(String email) throws MessagingException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
-        emailService.sendForgotPasswordMail(
+        var otp = generateAndSaveActivationToken(user);
+
+        emailService.sendRequestPasswordResetEmail(
                 user.getEmail(),
-                MailConstants.REQUEST_RESET_PASSWORD_SUBJECT,
-                String.valueOf(user.getId())
+                otp
         );
     }
 
@@ -74,11 +74,7 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(user);
-        emailService.sendPasswordResetSuccessMail(
-                user.getEmail(),
-                MailConstants.PASSWORD_RESET_SUCCESS_SUBJECT,
-                user.getFullName()
-        );
+        emailService.sendPasswordResetSuccessEmail(user.getEmail());
     }
 
     public User updateUser(String id, UserUpdateRequest request) {
