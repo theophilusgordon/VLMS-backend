@@ -1,7 +1,6 @@
 package com.theophilusgordon.vlmsbackend.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class AuthenticationController {
     @Operation(summary = "Register an invited user", description = "Register a new user with an invite")
     @PostMapping("/activate-account")
     public void activateAccount(
-            @RequestBody RegisterRequest request
+            @RequestBody AccountActivationRequest request
     ) {
         authenticationService.activateAccount(request);
     }

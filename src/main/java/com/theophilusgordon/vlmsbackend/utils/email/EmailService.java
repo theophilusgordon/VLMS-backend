@@ -52,26 +52,18 @@ public class EmailService {
     }
 
     @Async
-    public void sendInvitationMail(String to, String subject, String userId) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        Context context = new Context();
+    public void sendActivatedEmail(String recipient) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.ACCOUNT_ACTIVATED)
+                .subject("Account activated successfully")
+                .loginUrl(frontendUrl + "/login")
+                .build();
 
-        configureMimeMessageHelper(
-                mimeMessage,
-                to,
-                from,
-                subject,
-                context,
-                "invitation-mail-template"
-        );
-
-        String invitationUrl = frontendUrl + "/register/" + userId;
-
-        context.setVariable("subject", subject);
-        context.setVariable("invitationUrl", invitationUrl);
-
-        mailSender.send(mimeMessage);
+        sendEmail(emailDetails);
     }
+
+
 
     @Async
     public void sendSignupSuccessMail(String to, String subject, String username) throws MessagingException {

@@ -19,6 +19,4 @@ public class UserInviteResponse {
     private String role;
     @JsonProperty("status")
     private Status status;
-    @JsonProperty("inviteToken")
-    private String inviteToken;
 }

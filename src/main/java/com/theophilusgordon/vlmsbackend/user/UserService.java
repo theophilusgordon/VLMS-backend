@@ -37,8 +37,10 @@ public class UserService {
         var user = User.builder()
                 .email(request.email())
                 .role(this.createRole(request.role()))
+                .status(Status.INVITED)
                 .build();
         var savedUser = userRepository.save(user);
+        System.out.println("saved user: " + savedUser.getStatus());
         var otp = generateAndSaveActivationToken(user);
         emailService.sendActivationEmail(
                 user.getEmail(),
@@ -48,7 +50,7 @@ public class UserService {
                 .id(String.valueOf(savedUser.getId()))
                 .email(savedUser.getEmail())
                 .role(String.valueOf(savedUser.getRole()))
-                .status(Status.INVITED)
+                .status(savedUser.getStatus())
                 .build();
     }
 

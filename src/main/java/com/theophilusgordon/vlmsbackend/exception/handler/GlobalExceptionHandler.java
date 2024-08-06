@@ -2,6 +2,7 @@ package com.theophilusgordon.vlmsbackend.exception.handler;
 
 import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.exception.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,5 +83,13 @@ public class GlobalExceptionHandler {
         exceptionResponse.setMessage(ExceptionConstants.EMAIL_SEND_FAILURE);
         exceptionResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ExceptionResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
+        exceptionResponse.setMessage(ExceptionConstants.EXPIRED_TOKEN);
+        exceptionResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 }

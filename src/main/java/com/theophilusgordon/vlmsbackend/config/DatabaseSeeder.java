@@ -27,7 +27,7 @@ public class DatabaseSeeder {
                 admin.setDepartment("Some Department");
                 admin.setPassword(passwordEncoder.encode("adminPassword@2024"));
                 admin.setRole(Role.ADMIN);
-                admin.setStatus(Status.ACTIVE);
+                admin.setStatus(Status.ACTIVATED);
                 userRepository.save(admin);
             }
         };

@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.token;
 
+import com.theophilusgordon.vlmsbackend.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +17,6 @@ public interface TokenRepository extends JpaRepository<Token, String> {
     List<Token> findAllValidTokenByUser(UUID id);
 
     Optional<Token> findByToken(String token);
+
+    boolean existsByUserAndToken(User invitedUser, String otp);
 }

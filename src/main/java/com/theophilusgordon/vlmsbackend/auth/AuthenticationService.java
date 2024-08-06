@@ -5,9 +5,7 @@ import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.security.jwt.JwtService;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
-import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenService;
-import com.theophilusgordon.vlmsbackend.token.TokenType;
 import com.theophilusgordon.vlmsbackend.user.Status;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
@@ -24,8 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Service
@@ -40,24 +36,28 @@ public class AuthenticationService {
     private final TokenService tokenService;
     private final UserDetailsServiceImpl userDetailsService;
 
-    public void activateAccount(RegisterRequest request) {
-        User invitedUser = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new BadRequestException(ExceptionConstants.USER_NOT_INVITED + request.email()));
+public void activateAccount(AccountActivationRequest request) {
+    User invitedUser = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new BadRequestException(ExceptionConstants.USER_NOT_INVITED + request.email()));
 
-        if(invitedUser.getStatus() != Status.INVITED)
-            throw new BadRequestException(ExceptionConstants.USER_ALREADY_ACTIVATED + request.email());
+    System.out.println("invited user status: " + invitedUser.toString());
+    if (invitedUser.getStatus() != Status.INVITED)
+        throw new BadRequestException(ExceptionConstants.USER_ALREADY_ACTIVATED + request.email());
 
-        var user = User.builder()
-                .firstName(request.firstName())
-                .middleName(request.middleName())
-                .lastName(request.lastName())
-                .phone(request.phone())
-                .profilePhotoUrl(request.profilePhotoUrl())
-                .password(passwordEncoder.encode(request.password()))
-                .build();
-        userRepository.save(user);
-//        emailService.sendActivationEmail(user.getEmail(), otp);
-    }
+    if (!tokenRepository.existsByUserAndToken(invitedUser, request.otp()))
+        throw new BadRequestException(ExceptionConstants.INVALID_ACTIVATION_CODE);
+
+    invitedUser.setFirstName(request.firstName());
+    invitedUser.setMiddleName(request.middleName());
+    invitedUser.setLastName(request.lastName());
+    invitedUser.setPhone(request.phone());
+    invitedUser.setProfilePhotoUrl(request.profilePhotoUrl());
+    invitedUser.setPassword(passwordEncoder.encode(request.password()));
+    invitedUser.setStatus(Status.ACTIVATED);
+    userRepository.save(invitedUser);
+
+    emailService.sendActivatedEmail(invitedUser.getEmail());
+}
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
@@ -120,21 +120,4 @@ public class AuthenticationService {
             }
         }
     }
-
-
-
-//    private void sendValidationEmail(User user) throws MessagingException {
-//        var newToken = generateAndSaveActivationToken(user);
-//
-//        emailService.sendEmail(
-//                user.getEmail(),
-//                user.getFullName(),
-//                EmailTemplate.ACTIVATE_ACCOUNT,
-//                activationUrl,
-//                newToken,
-//                "Account activation"
-//        );
-//    }
-
-
 }

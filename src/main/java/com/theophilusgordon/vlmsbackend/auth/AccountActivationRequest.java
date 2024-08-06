@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record RegisterRequest(
+public record AccountActivationRequest(
         @NotBlank(message = "First name is required")
         @Size(max = 50, message = ExceptionConstants.NAME_LIMIT)
         String firstName,
@@ -28,6 +28,8 @@ public record RegisterRequest(
         String password,
         @NotBlank(message = "Confirm password is required")
         @Pattern(regexp = Patterns.PASSWORD, message = ExceptionConstants.INVALID_PASSWORD)
-        String confirmPassword
+        String confirmPassword,
+        @NotBlank(message = "OTP is required")
+        String otp
 ) {
 }
