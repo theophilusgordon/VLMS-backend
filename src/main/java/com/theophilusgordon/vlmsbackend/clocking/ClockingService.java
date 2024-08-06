@@ -19,18 +19,20 @@ public class ClockingService {
 
     public ClockingResponse clockIn(ClockInRequest clockInRequest) {
         Clocking clocking = new Clocking();
-        clocking.setUserId(clockInRequest.getUserId());
-        clocking.setWorkLocation(createWorkLocation(clockInRequest.getWorkLocation()));
+        clocking.setUserId(clockInRequest.userId());
+        clocking.setWorkLocation(createWorkLocation(clockInRequest.workLocation()));
         clocking.setClockInDateTime(LocalDateTime.now());
         clockingRepository.save(clocking);
-        User user = userRepository.findById(UUID.fromString(clockInRequest.getUserId()))
-                .orElseThrow(() -> new NotFoundException("User", clockInRequest.getUserId()));
+        User user = userRepository.findById(UUID.fromString(clockInRequest.userId()))
+                .orElseThrow(() -> new NotFoundException("User", clockInRequest.userId()));
 
         return this.buildClockingResponse(clocking, user);
     }
 
     public ClockingResponse clockOut(ClockOutRequest clockOutRequest) {
-        Clocking clocking = clockingRepository.findById(clockOutRequest.getClockingId()).orElseThrow(() -> new NotFoundException("Clocking", String.valueOf(clockOutRequest.getClockingId())));
+        Clocking clocking = clockingRepository.findById(clockOutRequest.clockingId()).orElseThrow(() -> new NotFoundException("Clocking", String.valueOf(clockOutRequest.clockingId())));
+        System.out.println("*********clocking: " + clocking);
+
         clocking.setClockOutDateTime(LocalDateTime.now());
         clockingRepository.save(clocking);
         User user = userRepository.findById(UUID.fromString(clocking.getUserId()))

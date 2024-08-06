@@ -3,21 +3,16 @@ package com.theophilusgordon.vlmsbackend.user;
 import com.theophilusgordon.vlmsbackend.constants.Patterns;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
-    @Getter
-   @Setter
-   @Builder
-    public class UserUpdateRequest {
+    public record UserUpdateRequest(
         @Size(max = 50, message = "First name must be less than 50 characters")
-        private String firstName;
+        String firstName,
         @Size(max = 50, message = "Middle name must be less than 50 characters")
-        private String middleName;
+        String middleName,
         @Size(max = 50, message = "Last name must be less than 50 characters")
-        private String lastName;
+        String lastName,
         @Pattern(regexp = Patterns.PHONE_NUMBER, message = "Phone number is not valid")
-        private String phone;
-        private String profilePhotoUrl;
+        String phone,
+        String profilePhotoUrl
+    ) {
 }

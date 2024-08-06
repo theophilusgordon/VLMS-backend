@@ -18,14 +18,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private final AuthenticationService authenticationService;
 
     @Operation(summary = "Register an invited user", description = "Register a new user with an invite")
     @PostMapping("/activate-account")
     public void activateAccount(
             @RequestBody RegisterRequest request
     ) throws MessagingException {
-        service.activateAccount(request);
+        authenticationService.activateAccount(request);
     }
 
     @Operation(summary = "Authenticate a user", description = "Authenticate a user")
@@ -33,7 +33,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @Operation(summary = "Refresh token", description = "Refresh token")
@@ -42,6 +42,6 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-        service.refreshToken(request, response);
+        authenticationService.refreshToken(request, response);
     }
 }

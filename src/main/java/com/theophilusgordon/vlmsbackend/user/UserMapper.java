@@ -6,16 +6,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
     public static User userUpdateRequestToUser(User user, UserUpdateRequest request){
-        if(request.getFirstName() != null)
-            user.setFirstName(request.getFirstName());
-        if(request.getMiddleName() != null)
-            user.setMiddleName(request.getMiddleName());
-        if(request.getLastName() != null)
-            user.setLastName(request.getLastName());
-        if(request.getPhone() != null)
-            user.setPhone(request.getPhone());
-        if(request.getProfilePhotoUrl() != null)
-            user.setProfilePhotoUrl(request.getProfilePhotoUrl());
+        if(request.firstName() != null)
+            user.setFirstName(request.firstName());
+        if(request.middleName() != null)
+            user.setMiddleName(request.middleName());
+        if(request.lastName() != null)
+            user.setLastName(request.lastName());
+        if(request.phone() != null)
+            user.setPhone(request.phone());
+        if(request.profilePhotoUrl() != null)
+            user.setProfilePhotoUrl(request.profilePhotoUrl());
         return user;
     }
 }

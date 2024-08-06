@@ -50,7 +50,7 @@ public class User implements UserDetails, Principal {
 
     @JsonProperty("fullName")
     public String getFullName() {
-        return String.format("%s %s %s", firstName, middleName, lastName);
+        return firstName + " " + lastName;
     }
 
     @JsonProperty("initials")
@@ -59,6 +59,7 @@ public class User implements UserDetails, Principal {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
     }

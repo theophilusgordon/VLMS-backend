@@ -25,12 +25,12 @@ public class UserService {
     private final MailService mailService;
 
     public UserInviteResponse inviteUser(UserInviteRequest request) throws MessagingException {
-        if(Boolean.TRUE.equals(userRepository.existsByEmail(request.getEmail())))
-            throw new BadRequestException(ExceptionConstants.USER_ALREADY_EXISTS + request.getEmail());
+        if(Boolean.TRUE.equals(userRepository.existsByEmail(request.email())))
+            throw new BadRequestException(ExceptionConstants.USER_ALREADY_EXISTS + request.email());
 
         var user = User.builder()
-                .email(request.getEmail())
-                .role(this.createRole(request.getRole()))
+                .email(request.email())
+                .role(this.createRole(request.role()))
                 .build();
         var savedUser = userRepository.save(user);
         mailService.sendInvitationMail(
@@ -60,11 +60,11 @@ public class UserService {
         var user = userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("User", id));
 
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
+        if (!request.password().equals(request.confirmPassword())) {
             throw new BadRequestException(ExceptionConstants.PASSWORDS_MISMATCH);
         }
 
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(user);
         mailService.sendPasswordResetSuccessMail(
                 user.getEmail(),
@@ -84,14 +84,14 @@ public class UserService {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
             throw new BadRequestException(ExceptionConstants.INCORRECT_PASSWORD);
         }
-        if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
+        if (!request.newPassword().equals(request.confirmationPassword())) {
             throw new BadRequestException(ExceptionConstants.PASSWORDS_MISMATCH);
         }
 
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
 
         userRepository.save(user);
     }

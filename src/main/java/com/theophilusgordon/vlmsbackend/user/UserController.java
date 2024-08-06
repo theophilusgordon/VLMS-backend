@@ -30,7 +30,7 @@ public class UserController {
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(@RequestBody @Valid PasswordRequestResetRequest request) throws MessagingException {
-        userService.requestResetPassword(request.getEmail());
+        userService.requestResetPassword(request.email());
         return ResponseEntity.ok().build();
     }
 

@@ -22,7 +22,7 @@ public class GuestService {
 // TODO: Implement method to check in a guest with QR code details
 
     public Guest registerGuest(GuestRegisterRequest request){
-        guestRepository.findByEmail(request.getEmail())
+        guestRepository.findByEmail(request.email())
             .ifPresent(guest -> {
                 throw new BadRequestException("Email already exists");
             });

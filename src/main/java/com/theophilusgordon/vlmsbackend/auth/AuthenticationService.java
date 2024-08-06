@@ -1,6 +1,7 @@
 package com.theophilusgordon.vlmsbackend.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.security.jwt.JwtService;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
@@ -22,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 
 @Service
@@ -38,19 +38,19 @@ public class AuthenticationService {
     private final UserDetailsServiceImpl userDetailsService;
 
     public void activateAccount(RegisterRequest request) throws MessagingException {
-        User invitedUser = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadRequestException(String.format("User with email: %s not found. You need to be invited by the administrator to register.", request.getEmail())));
+        User invitedUser = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new BadRequestException(ExceptionConstants.USER_NOT_INVITED + request.email()));
 
         if(invitedUser.getStatus() != Status.INVITED)
-            throw new BadRequestException(String.format("User with email: %s is not is already registered.", request.getEmail()));
+            throw new BadRequestException(ExceptionConstants.USER_ALREADY_ACTIVATED + request.email());
 
         var user = User.builder()
-                .firstName(request.getFirstName())
-                .middleName(request.getMiddleName())
-                .lastName(request.getLastName())
-                .phone(request.getPhone())
-                .profilePhotoUrl(request.getProfilePhotoUrl())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.firstName())
+                .middleName(request.middleName())
+                .lastName(request.lastName())
+                .phone(request.phone())
+                .profilePhotoUrl(request.profilePhotoUrl())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
         userRepository.save(user);
         mailService.sendSignupSuccessMail(
@@ -63,8 +63,8 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+                        request.email(),
+                        request.password()
                 )
         );
 

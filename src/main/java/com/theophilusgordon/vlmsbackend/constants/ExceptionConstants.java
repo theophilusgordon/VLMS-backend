@@ -16,4 +16,8 @@ public final class ExceptionConstants {
     public static final String INVALID_ROLE = "Role must either be 'admin' or 'host'";
     public static final String PASSWORDS_MISMATCH = "Passwords do not match";
     public static final String INCORRECT_PASSWORD = "Incorrect password";
+    public static final String INVALID_PHONE_NUMBER = "Phone number is not valid";
+    public static final String NAME_LIMIT = "Firstname, Middlename or Lastname must be less than 50 characters";
+    public static final String USER_NOT_INVITED = "Make sure you have been invited by an admin to activate your account. User not found with email: ";
+    public static final String USER_ALREADY_ACTIVATED = "User account already activated with email: ";
 }

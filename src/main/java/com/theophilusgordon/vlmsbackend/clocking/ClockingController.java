@@ -27,6 +27,7 @@ public class ClockingController {
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @PostMapping("/clock-out")
     public ResponseEntity<ClockingResponse> clockOut(@RequestBody @Valid ClockOutRequest request) {
+        System.out.println("We are getting here");
         return ResponseEntity.ok(clockingService.clockOut(request));
     }
 }
