@@ -2,6 +2,7 @@ package com.theophilusgordon.vlmsbackend.exception.handler;
 
 import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.exception.*;
+import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -73,5 +74,13 @@ public class GlobalExceptionHandler {
         exceptionResponse.setMessage(ExceptionConstants.PAGE_NOT_FOUND);
         exceptionResponse.setStatus(HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SMTPSendFailedException.class)
+    public ResponseEntity<ExceptionResponse> handleSMTPSendFailedException(SMTPSendFailedException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse();
+        exceptionResponse.setMessage(ExceptionConstants.EMAIL_SEND_FAILURE);
+        exceptionResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

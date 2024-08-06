@@ -4,7 +4,10 @@ import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.constants.MailConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
-import com.theophilusgordon.vlmsbackend.utils.MailService;
+import com.theophilusgordon.vlmsbackend.token.Token;
+import com.theophilusgordon.vlmsbackend.token.TokenRepository;
+import com.theophilusgordon.vlmsbackend.token.TokenType;
+import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -22,9 +27,10 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final MailService mailService;
+    private final EmailService emailService;
+    private final TokenRepository tokenRepository;
 
-    public UserInviteResponse inviteUser(UserInviteRequest request) throws MessagingException {
+    public UserInviteResponse inviteUser(UserInviteRequest request) {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(request.email())))
             throw new BadRequestException(ExceptionConstants.USER_ALREADY_EXISTS + request.email());
 
@@ -33,10 +39,10 @@ public class UserService {
                 .role(this.createRole(request.role()))
                 .build();
         var savedUser = userRepository.save(user);
-        mailService.sendInvitationMail(
+        var otp = generateAndSaveActivationToken(user);
+        emailService.sendActivationEmail(
                 user.getEmail(),
-                MailConstants.INVITATION_SUBJECT,
-                String.valueOf(savedUser.getId())
+                otp
         );
         return UserInviteResponse.builder()
                 .id(String.valueOf(savedUser.getId()))
@@ -49,7 +55,7 @@ public class UserService {
     public void requestResetPassword(String email) throws MessagingException {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
-        mailService.sendForgotPasswordMail(
+        emailService.sendForgotPasswordMail(
                 user.getEmail(),
                 MailConstants.REQUEST_RESET_PASSWORD_SUBJECT,
                 String.valueOf(user.getId())
@@ -66,7 +72,7 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(user);
-        mailService.sendPasswordResetSuccessMail(
+        emailService.sendPasswordResetSuccessMail(
                 user.getEmail(),
                 MailConstants.PASSWORD_RESET_SUCCESS_SUBJECT,
                 user.getFullName()
@@ -131,5 +137,33 @@ public class UserService {
             }
         }
         throw new IllegalArgumentException("Invalid role: " + value);
+    }
+
+    private String generateAndSaveActivationToken(User user) {
+        String generatedToken = generateActivationCode();
+        var token = Token.builder()
+                .token(generatedToken)
+                .createdAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusMinutes(15))
+                .tokenType(TokenType.OTP)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
+
+        return generatedToken;
+    }
+
+    private String generateActivationCode() {
+        String characters = "0123456789";
+        StringBuilder codeBuilder = new StringBuilder();
+
+        SecureRandom secureRandom = new SecureRandom();
+
+        for (int i = 0; i < 6; i++) {
+            int randomIndex = secureRandom.nextInt(characters.length());
+            codeBuilder.append(characters.charAt(randomIndex));
+        }
+
+        return codeBuilder.toString();
     }
 }

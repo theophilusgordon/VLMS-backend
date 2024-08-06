@@ -20,4 +20,5 @@ public final class ExceptionConstants {
     public static final String NAME_LIMIT = "Firstname, Middlename or Lastname must be less than 50 characters";
     public static final String USER_NOT_INVITED = "Make sure you have been invited by an admin to activate your account. User not found with email: ";
     public static final String USER_ALREADY_ACTIVATED = "User account already activated with email: ";
+    public static final String EMAIL_SEND_FAILURE = "Failed to send email";
 }

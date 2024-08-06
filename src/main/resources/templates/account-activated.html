@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Welcome to Guest logix! Your Account Setup is Complete</title>
+    <style>
+        body {
+            font-family: Helvetica Neue, Helvetica, Arial, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 10px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .login-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h3 th:text="${subject}">Welcome to ViLog! Your Account Setup is Complete</h3>
+</header>
+<p>Dear User,</p>
+
+<p>
+    Congratulations and welcome to Guest Logix! We are delighted to inform you that
+    your account activation was successful. You can now login to your account.
+</p>
+<p>
+    Click on the link below to access your account and start tracking your visitors.
+</p>
+    <div class="login-link">
+        <a th:href="${loginUrl}">Log in to your account</a>
+    </div>
+<div>
+    <h4>Features you will enjoy as a Host.</h4>
+    <ul>
+        <li><span style="font-weight: bold">Real-time Notifications</span>: Get notified when your guests arrive.</li>
+        <li><span style="font-weight: bold">Live Visitor Tracking</span>: Monitor visitor activities in real-time.</li>
+        <li><span style="font-weight: bold">Comprehensive Dashboard</span>: Access detailed visitor statistics and trends.</li>
+        <li><span style="font-weight: bold">Custom Reports</span>: Generate and export custom reports.</li>
+    </ul>
+</div>
+    <footer>
+        <p>
+            For any assistance or queries, please feel free to contact our support team at
+            <a href="https://www.linkedin.com/in/theophilusgordon">support@vlms.org</a>
+        </p>
+        <p>Best regards,</p>
+        <p>The VLMS Team</p>
+        <p>GordTex Limited</p>
+        <p>P. O. Box TG2024</p>
+        <p>Phone: +233 (0) 507200245</p>
+        <a href="https://www.linkedin.com/in/theophilusgordon">www.vlms.com</a>
+    </footer>
+</div>
+</body>
+</html>

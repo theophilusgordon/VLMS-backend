@@ -5,13 +5,14 @@ import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.security.jwt.JwtService;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
+import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenService;
+import com.theophilusgordon.vlmsbackend.token.TokenType;
 import com.theophilusgordon.vlmsbackend.user.Status;
-import com.theophilusgordon.vlmsbackend.utils.MailService;
+import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Service
@@ -33,11 +36,11 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final MailService mailService;
+    private final EmailService emailService;
     private final TokenService tokenService;
     private final UserDetailsServiceImpl userDetailsService;
 
-    public void activateAccount(RegisterRequest request) throws MessagingException {
+    public void activateAccount(RegisterRequest request) {
         User invitedUser = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BadRequestException(ExceptionConstants.USER_NOT_INVITED + request.email()));
 
@@ -53,11 +56,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .build();
         userRepository.save(user);
-        mailService.sendSignupSuccessMail(
-                user.getEmail(),
-                "Welcome to GuestLogix",
-                user.getFullName()
-        );
+//        emailService.sendActivationEmail(user.getEmail(), otp);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -122,45 +121,20 @@ public class AuthenticationService {
         }
     }
 
-//    private String generateAndSaveActivationToken(User user) {
-//        // Generate a token
-//        String generatedToken = generateActivationCode(6);
-//        var token = Token.builder()
-//                .token(generatedToken)
-//                .createdAt(LocalDateTime.now())
-//                .expiresAt(LocalDateTime.now().plusMinutes(15))
-//                .user(user)
-//                .build();
-//        tokenRepository.save(token);
-//
-//        return generatedToken;
-//    }
-//
+
+
 //    private void sendValidationEmail(User user) throws MessagingException {
 //        var newToken = generateAndSaveActivationToken(user);
 //
 //        emailService.sendEmail(
 //                user.getEmail(),
 //                user.getFullName(),
-//                EmailTemplateName.ACTIVATE_ACCOUNT,
+//                EmailTemplate.ACTIVATE_ACCOUNT,
 //                activationUrl,
 //                newToken,
 //                "Account activation"
 //        );
 //    }
 
-//    private String generateActivationCode(int length) {
-//        String characters = "0123456789";
-//        StringBuilder codeBuilder = new StringBuilder();
-//
-//        SecureRandom secureRandom = new SecureRandom();
-//
-//        for (int i = 0; i < length; i++) {
-//            int randomIndex = secureRandom.nextInt(characters.length());
-//            codeBuilder.append(characters.charAt(randomIndex));
-//        }
-//
-//        return codeBuilder.toString();
-//    }
 
 }

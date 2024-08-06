@@ -1,6 +1,9 @@
-package com.theophilusgordon.vlmsbackend.utils;
+package com.theophilusgordon.vlmsbackend.utils.email;
 
+import com.theophilusgordon.vlmsbackend.exception.EmailSendFailureException;
 import com.theophilusgordon.vlmsbackend.guest.Guest;
+import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
+import com.theophilusgordon.vlmsbackend.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -9,24 +12,44 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
 
 
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${spring.mail.username}")
     private String from;
 
     @Value("${frontend.url}")
     private String frontendUrl;
+
+    @Async
+    public void sendActivationEmail(String recipient, String code) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.ACTIVATE_ACCOUNT)
+                .subject("Activate your account")
+                .activationUrl(frontendUrl + "/activate-account")
+                .otp(code)
+                .build();
+
+        sendEmail(emailDetails);
+    }
 
     @Async
     public void sendInvitationMail(String to, String subject, String userId) throws MessagingException {
@@ -184,5 +207,50 @@ public class MailService {
 
         String htmlContent = templateEngine.process(template, context);
         mimeMessageHelper.setText(htmlContent, true);
+    }
+
+    private void sendEmail(EmailDetails emailDetails) {
+        try {
+            String templateName = emailDetails.getTemplate().getTemplateName();
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper;
+            helper = new MimeMessageHelper(
+                    message,
+                    MULTIPART_MODE_MIXED,
+                    UTF_8.name());
+
+            User user = (User) userDetailsService.loadUserByUsername(emailDetails.getRecipient());
+            Context context = getContext(emailDetails, user);
+
+            helper.setFrom(from);
+            helper.setTo(emailDetails.getRecipient());
+            helper.setSubject(emailDetails.getSubject());
+
+            String template = templateEngine.process(templateName, context);
+
+            helper.setText(template, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new EmailSendFailureException();
+        }
+    }
+
+    private static Context getContext(EmailDetails emailDetails, User user) {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("firstname", user.getFirstName());
+        properties.put("recipient", emailDetails.getRecipient());
+        properties.put("otp", emailDetails.getOtp());
+        properties.put("confirmationUrl", emailDetails.getActivationUrl());
+        properties.put("type", emailDetails.getType());
+        properties.put("actor", emailDetails.getName());
+        properties.put("reason", emailDetails.getReason());
+        properties.put("date", emailDetails.getDate());
+
+        Context context = new Context();
+        context.setVariables(properties);
+        return context;
     }
 }

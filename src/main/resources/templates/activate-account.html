@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title th:text="${subject}">Invitation Mail from Guest Logix</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 600px;
+                margin: 10px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .activation-code {
+                font-size: 36px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .activation-link {
+                display: block;
+                text-align: center;
+                margin-top: 20px;
+            }
+            .activation-link a {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+    <header>
+        <h3 th:text="${subject}">You have been invited to join the VLMS.</h3>
+    </header>
+        <p>Dear User,</p>
+        <p>
+            You have been invited to join VLMS, a visitor management system that
+            helps you manage your visitors efficiently and keep track of visitor activities in real-time.
+        </p>
+        <p>
+            Please use the following activation code to activate your account:
+        </p>
+        <div class="activation-code">
+            <span th:text="${otp}"></span>
+        </div>
+
+    <div class="activation-link">
+        <a th:href="${activationUrl}" target="_blank">Activate your account</a>
+    </div>
+        <footer>
+            <p>
+                For any assistance or queries, please feel free to contact our support team at
+                <a href="https://www.linkedin.com/in/theophilusgordon">support@gordtex.org</a>
+            </p>
+            <p>Best regards,</p>
+            <p>The Guest Logix Team</p>
+            <p>GordTex Limited</p>
+            <p>P. O. Box TG2024</p>
+            <p>Phone: +233 (0) 507200245</p>
+            <a href="https://www.linkedin.com/in/theophilusgordon">www.gordtex.com</a>
+        </footer>
+    </div>
+    </body>
+</html>

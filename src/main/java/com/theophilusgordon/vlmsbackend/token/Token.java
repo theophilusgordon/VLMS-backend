@@ -4,6 +4,8 @@ import com.theophilusgordon.vlmsbackend.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -23,6 +25,9 @@ public class Token {
     public TokenType tokenType = TokenType.BEARER;
 
     public boolean revoked;
+
+    public LocalDateTime createdAt;
+    public LocalDateTime expiresAt;
 
     public boolean expired;
 

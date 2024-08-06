@@ -7,7 +7,7 @@ import com.theophilusgordon.vlmsbackend.guest.Guest;
 import com.theophilusgordon.vlmsbackend.guest.GuestRepository;
 import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
-import com.theophilusgordon.vlmsbackend.utils.MailService;
+import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import com.theophilusgordon.vlmsbackend.utils.QRCodeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class VisitService {
     private final GuestRepository guestRepository;
     private final UserRepository hostRepository;
     private final QRCodeService qrCodeService;
-    private final MailService mailService;
+    private final EmailService emailService;
 
 
     public VisitResponse checkIn(VisitRequest request) throws IOException, WriterException, MessagingException {
@@ -44,14 +44,14 @@ public class VisitService {
         checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
         checkInRepository.save(checkin);
 
-        mailService.sendCheckinSuccessMail(
+        emailService.sendCheckinSuccessMail(
                 guest.getEmail(),
                 "Successful Check-In at GordTex - Your QR Code for Future Visits",
                 guest.getFullName(),
                 checkin.getQrCode()
         );
 
-        mailService.sendCheckinNotificationMail(
+        emailService.sendCheckinNotificationMail(
                 host.getEmail(),
                 "Your Guest Has Arrived",
                 host.getFullName(),

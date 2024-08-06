@@ -24,7 +24,7 @@ public class AuthenticationController {
     @PostMapping("/activate-account")
     public void activateAccount(
             @RequestBody RegisterRequest request
-    ) throws MessagingException {
+    ) {
         authenticationService.activateAccount(request);
     }
 

@@ -2,7 +2,7 @@ package com.theophilusgordon.vlmsbackend.user;
 
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
-import com.theophilusgordon.vlmsbackend.utils.MailService;
+import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private MailService mailService;
+    private EmailService emailService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -63,7 +63,7 @@ class UserServiceTest {
         UserInviteResponse response = userService.inviteUser(request);
 
         assertNotNull(response);
-        verify(mailService, times(1)).sendInvitationMail(anyString(), anyString(), anyString());
+        verify(emailService, times(1)).sendInvitationMail(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -79,7 +79,7 @@ class UserServiceTest {
 
         userService.requestResetPassword("test@example.com");
 
-        verify(mailService, times(1)).sendForgotPasswordMail(anyString(), anyString(), anyString());
+        verify(emailService, times(1)).sendForgotPasswordMail(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -110,7 +110,7 @@ class UserServiceTest {
         userService.resetPassword(UUID.randomUUID().toString(), request);
 
         verify(userRepository, times(1)).save(user);
-        verify(mailService, times(1)).sendPasswordResetSuccessMail(anyString(), anyString(), anyString());
+        verify(emailService, times(1)).sendPasswordResetSuccessMail(anyString(), anyString(), anyString());
     }
 
     @Test
