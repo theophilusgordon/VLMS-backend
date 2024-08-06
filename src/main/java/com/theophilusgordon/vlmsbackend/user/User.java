@@ -104,6 +104,6 @@ public class User implements UserDetails, Principal {
     @Override
     @JsonIgnore
     public String getName() {
-        return email;
+        return id.toString();
     }
 }
