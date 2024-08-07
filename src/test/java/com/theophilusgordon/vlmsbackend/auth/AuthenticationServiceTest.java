@@ -10,6 +10,7 @@ import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -163,26 +164,28 @@ class AuthenticationServiceTest {
         assertEquals("refreshToken", authResponse.getRefreshToken());
     }
 
-    @Test
-    void testRefreshToken_Success() throws IOException {
-        String refreshToken = "refreshToken";
-        String userEmail = "test@example.com";
-        String accessToken = "newAccessToken";
-        User user = new User();
+   @Test
+void testRefreshToken_Success() throws IOException {
+    String refreshToken = "refreshToken";
+    String userEmail = "test@example.com";
+    String accessToken = "newAccessToken";
+    User user = new User();
 
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + refreshToken);
-        when(jwtService.extractUsername(refreshToken)).thenReturn(userEmail);
-        when(userDetailsService.loadUserByUsername(userEmail)).thenReturn(user);
-        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
-        when(jwtService.isTokenValid(refreshToken, user)).thenReturn(true);
-        when(jwtService.generateToken(user)).thenReturn(accessToken);
+    ServletOutputStream outputStream = mock(ServletOutputStream.class);
+    when(response.getOutputStream()).thenReturn(outputStream);
+    when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + refreshToken);
+    when(jwtService.extractUsername(refreshToken)).thenReturn(userEmail);
+    when(userDetailsService.loadUserByUsername(userEmail)).thenReturn(user);
+    when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
+    when(jwtService.isTokenValid(refreshToken, user)).thenReturn(true);
+    when(jwtService.generateToken(user)).thenReturn(accessToken);
 
-        authenticationService.refreshToken(request, response);
+    authenticationService.refreshToken(request, response);
 
-        verify(jwtService).generateToken(user);
-        verify(tokenService).saveUserToken(user, accessToken);
-        verify(response).getOutputStream();
-    }
+    verify(jwtService).generateToken(user);
+    verify(tokenService).saveUserToken(user, accessToken);
+    verify(response).getOutputStream();
+}
 
     @Test
     void testRefreshToken_InvalidToken() throws IOException {
