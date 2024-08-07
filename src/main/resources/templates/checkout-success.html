@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title th:text="${subject}">Successful Check-In at VLMS - Your QR Code for Future Visits</title>
+    <title th:text="${subject}">Successful Check-Out at VLMS - Goodbye</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,22 +23,13 @@
 <body>
 <div class="container">
     <header>
-        <h3 th:text="${subject}">Successful Check-In at GordTex - Your QR Code for Future Visits</h3>
+        <h3 th:text="${subject}">Successful Check-Out at VLMS - Goodbye</h3>
     </header>
     <p>Dear <span th:text="${guestName}">User</span>,,</p>
 
     <p>
-        We are delighted to inform you that you have successfully checked in at VLMS.
-        We hope you have a pleasant visit.
+        You have successfully checked out at VLMS. We hope you had a pleasant visit.
     </p>
-    <p>
-        To make your future check-ins even more efficient, please find your unique QR code attached to this email.
-        You can use this QR code for quick check-ins on your next visits.
-    </p>
-
-        <h4>Your QR Code:</h4>
-        <p>Please find your unique QR code attached to this email.</p>
-        <img src="${cid:qrCode}" alt="QR Code" style="width: 200px; height: 200px;"/>
     <footer>
         <p>
             For any assistance or queries, please feel free to contact our support team at

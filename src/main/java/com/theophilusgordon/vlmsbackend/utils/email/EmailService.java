@@ -1,9 +1,8 @@
 package com.theophilusgordon.vlmsbackend.utils.email;
 
+import com.theophilusgordon.vlmsbackend.constants.EmailConstants;
 import com.theophilusgordon.vlmsbackend.exception.EmailSendFailureException;
 import com.theophilusgordon.vlmsbackend.guest.Guest;
-import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
-import com.theophilusgordon.vlmsbackend.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE
 public class EmailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Value("${spring.mail.username}")
     private String from;
@@ -41,7 +39,7 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.ACTIVATE_ACCOUNT)
-                .subject("Activate your account")
+                .subject(EmailConstants.ACTIVATE_ACCOUNT_SUBJECT)
                 .activationUrl(frontendUrl + "/activate-account")
                 .otp(code)
                 .build();
@@ -54,7 +52,7 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.ACCOUNT_ACTIVATED)
-                .subject("Account activated successfully")
+                .subject(EmailConstants.ACCOUNT_ACTIVATION_SUBJECT)
                 .loginUrl(frontendUrl + "/login")
                 .build();
 
@@ -66,7 +64,7 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.REQUEST_PASSWORD_RESET)
-                .subject("Reset your password")
+                .subject(EmailConstants.REQUEST_RESET_PASSWORD_SUBJECT)
                 .otp(otp)
                 .resetPasswordUrl(frontendUrl + "/reset-password")
                 .build();
@@ -79,7 +77,7 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.PASSWORD_RESET_SUCCESS)
-                .subject("Password reset successful")
+                .subject(EmailConstants.PASSWORD_RESET_SUCCESS_SUBJECT)
                 .loginUrl(frontendUrl + "/login")
                 .build();
 
@@ -94,12 +92,12 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.CHECKIN_NOTIFICATION)
-                .subject("Password reset successful")
+                .subject(EmailConstants.CHECKIN_NOTIFICATION_SUBJECT)
                 .hostName(hostName)
                 .guestName(guest.getFullName())
                 .guestPhone(guest.getPhone())
                 .guestCompany(guest.getCompany())
-                .checkInTime(checkInTime)
+                .checkinTime(checkInTime)
                 .build();
 
         sendEmail(emailDetails);
@@ -112,9 +110,43 @@ public class EmailService {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
                 .template(EmailTemplate.CHECKIN_SUCCESS)
-                .subject("Check-in successful")
+                .subject(EmailConstants.CHECKIN_SUCCESS_SUBJECT)
                 .guestName(guestName)
                 .qrCode(qrCode)
+                .build();
+
+        sendEmail(emailDetails);
+    }
+
+    @Async
+    public void sendCheckoutNotificationEmail(String recipient,
+                                             String hostName,
+                                             Guest guest,
+                                             LocalDateTime checkoutTime) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.CHECKOUT_NOTIFICATION)
+                .subject(EmailConstants.CHECKOUT_NOTIFICATION_SUBJECT)
+                .hostName(hostName)
+                .guestName(guest.getFullName())
+                .guestPhone(guest.getPhone())
+                .guestCompany(guest.getCompany())
+                .checkinTime(checkoutTime)
+                .build();
+
+        sendEmail(emailDetails);
+    }
+
+    @Async
+    public void sendCheckoutSuccessEmail(String recipient,
+                                        String guestName,
+                                         LocalDateTime checkoutTime) {
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(recipient)
+                .template(EmailTemplate.CHECKOUT_SUCCESS)
+                .subject(EmailConstants.CHECKOUT_SUCCESS_SUBJECT)
+                .guestName(guestName)
+                .checkoutTime(checkoutTime)
                 .build();
 
         sendEmail(emailDetails);
@@ -159,7 +191,8 @@ public class EmailService {
         properties.put("resetPasswordUrl", emailDetails.getResetPasswordUrl());
         properties.put("hostName", emailDetails.getHostName());
         properties.put("guestName", emailDetails.getGuestName());
-        properties.put("checkInTime", emailDetails.getCheckInTime());
+        properties.put("checkInTime", emailDetails.getCheckinTime());
+        properties.put("checkOutTime", emailDetails.getCheckoutTime());
         properties.put("qrCode", emailDetails.getQrCode());
         properties.put("guestPhone", emailDetails.getGuestPhone());
         properties.put("guestCompany", emailDetails.getGuestCompany());

@@ -71,8 +71,24 @@ public class VisitService {
     public VisitResponse checkOut(Integer id) {
         var checkIn = checkInRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("CheckInOut", String.valueOf(id)));
+        if(checkIn.getCheckOutDateTime() != null)
+            throw new BadRequestException(ExceptionConstants.GUEST_ALREADY_CHECKED_OUT);
+
         checkIn.setCheckOutDateTime(LocalDateTime.now());
         checkInRepository.save(checkIn);
+
+        emailService.sendCheckoutSuccessEmail(
+                checkIn.getGuest().getEmail(),
+                checkIn.getGuest().getFirstName(),
+                checkIn.getCheckOutDateTime()
+        );
+
+        emailService.sendCheckoutNotificationEmail(
+                checkIn.getHost().getEmail(),
+                checkIn.getHost().getFirstName(),
+                checkIn.getGuest(),
+                checkIn.getCheckOutDateTime()
+        );
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 

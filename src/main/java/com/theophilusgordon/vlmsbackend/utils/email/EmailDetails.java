@@ -1,6 +1,5 @@
 package com.theophilusgordon.vlmsbackend.utils.email;
 
-import com.theophilusgordon.vlmsbackend.guest.Guest;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,8 @@ public class EmailDetails {
     private String subject;
     private String hostName;
     private String guestName;
-    private LocalDateTime checkInTime;
+    private LocalDateTime checkinTime;
+    private LocalDateTime checkoutTime;
     private byte[] qrCode;
     private String guestPhone;
     private String guestCompany;

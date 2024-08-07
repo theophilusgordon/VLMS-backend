@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Welcome to Guest logix! Your Account Setup is Complete</title>
+    <title th:text="${subject}">Welcome to VLMS! Your Account Setup is Complete</title>
     <style>
         body {
             font-family: Helvetica Neue, Helvetica, Arial, Verdana, sans-serif;
@@ -36,11 +36,11 @@
 <body>
 <div class="container">
 <header>
-    <h3 th:text="${subject}">Welcome to ViLog! Your Account Setup is Complete</h3>
+    <h3 th:text="${subject}">Welcome to VLMS! Your Account Setup is Complete</h3>
 </header>
     <p>Dear <span th:text="${firstname}">User</span>,</p>
 <p>
-    Congratulations and welcome to Guest Logix! We are delighted to inform you that
+    Congratulations and welcome to VLMS! We are delighted to inform you that
     your account activation was successful. You can now login to your account.
 </p>
 <p>
@@ -64,7 +64,7 @@
             <a href="https://www.linkedin.com/in/theophilusgordon">support@vlms.org</a>
         </p>
         <p>Best regards,</p>
-        <p>The VLMS Team</p>
+        <p>VLMS Team</p>
         <p>GordTex Limited</p>
         <p>P. O. Box TG2024</p>
         <p>Phone: +233 (0) 507200245</p>

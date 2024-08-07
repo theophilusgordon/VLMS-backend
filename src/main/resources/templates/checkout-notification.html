@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title th:text="${subject}">VLMS - Your Guest Has Arrived</title>
+    <title th:text="${subject}">VLMS - Your Guest Is Leaving</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,13 +23,12 @@
 <body>
 <div class="container">
     <header>
-        <h3 th:text="${subject}">Your Guest Has Arrived</h3>
+        <h3 th:text="${subject}">Your Guest Is Leaving</h3>
     </header>
     <p>Dear <span th:text="${hostname}">User</span>,</p>
 
     <p>
-        We are pleased to inform you that your guest, <span th:text="${guetName}"></span>,
-        has just checked in to see you.
+        Your guest, <span th:text="${guestName}"></span>, has just checked out and is leaving the premises.
     </p>
     <h4>Guest Details:</h4>
     <ul>
@@ -37,26 +36,10 @@
         <li><span style="font-weight: bold">Phone</span>: <span th:text="${guestPhone}"></span></li>
         <li><span style="font-weight: bold">Company</span>: <span th:text="${guestCompany}"></span></li>
         <li><span style="font-weight: bold">Check-in Time</span>: <span th:text="${checkinTime}"></span></li>
+        <li><span style="font-weight: bold">Check-out Time</span>: <span th:text="${checkoutTime}"></span></li>
     </ul>
     <p>
-        Please proceed to the reception area to welcome your guest. If you need any assistance or
-        have any special instructions for our team, feel free to let us know.
-    </p>
-
-    <h4>Next Steps:</h4>
-    <ol>
-        <li>
-            <span style="font-weight: bold">Meet Your Guest:</span>Head to the reception area to greet
-            <span th:text="${guestName}"></span>
-        </li>
-        <li>
-            <span style="font-weight: bold">Check-out Process:</span>Once the meeting is over, ensure that
-            the guest checks out to complete the visit record.
-        </li>
-    </ol>
-
-    <p>
-        We hope you have a productive meeting. Thank you for using Guest Logix to manage your visitors.
+        We hope you had a productive meeting. Thank you for using VLMS to manage your visitors.
     </p>
     <footer>
         <p>

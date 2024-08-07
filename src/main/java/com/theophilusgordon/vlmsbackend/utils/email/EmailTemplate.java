@@ -10,7 +10,8 @@ public enum EmailTemplate {
     PASSWORD_RESET_SUCCESS("password-reset-success"),
     CHECKIN_NOTIFICATION("checkin-notification"),
     CHECKOUT_NOTIFICATION("checkout-notification"),
-    CHECKIN_SUCCESS("checkin-success");
+    CHECKIN_SUCCESS("checkin-success"),
+    CHECKOUT_SUCCESS("checkout-success");
 
     private final String templateName;
 
