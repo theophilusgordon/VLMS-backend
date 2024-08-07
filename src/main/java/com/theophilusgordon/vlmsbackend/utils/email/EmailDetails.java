@@ -1,5 +1,6 @@
 package com.theophilusgordon.vlmsbackend.utils.email;
 
+import com.theophilusgordon.vlmsbackend.guest.Guest;
 import lombok.*;
 
 import java.time.LocalDateTime;

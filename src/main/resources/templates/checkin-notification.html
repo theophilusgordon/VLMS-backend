@@ -28,14 +28,14 @@
     <p>Dear <span th:text="${hostname}">User</span>,</p>
 
     <p>
-        We are pleased to inform you that your guest, <span th:text="${guest.getFullName()}"></span>,
+        We are pleased to inform you that your guest, <span th:text="${guetName}"></span>,
         has just checked in to see you.
     </p>
     <h4>Guest Details:</h4>
     <ul>
         <li><span style="font-weight: bold">Name</span>: <span th:text="${guestName}"></span></li>
-        <li><span style="font-weight: bold">Phone</span>: <span th:text="${guestPhone()}"></span></li>
-        <li><span style="font-weight: bold">Company</span>: <span th:text="${guestCompany()}"></span></li>
+        <li><span style="font-weight: bold">Phone</span>: <span th:text="${guestPhone}"></span></li>
+        <li><span style="font-weight: bold">Company</span>: <span th:text="${guestCompany}"></span></li>
         <li><span style="font-weight: bold">Check-in Time</span>: <span th:text="${checkinTime}"></span></li>
     </ul>
     <p>
@@ -47,7 +47,7 @@
     <ol>
         <li>
             <span style="font-weight: bold">Meet Your Guest:</span>Head to the reception area to greet
-            <span th:text="${guest.getFullName()}"></span>
+            <span th:text="${guestName}"></span>
         </li>
         <li>
             <span style="font-weight: bold">Check-out Process:</span>Once the meeting is over, ensure that

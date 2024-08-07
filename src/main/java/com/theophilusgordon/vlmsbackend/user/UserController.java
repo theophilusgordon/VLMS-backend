@@ -23,7 +23,8 @@ public class UserController {
     @Operation(summary = "Invite a user", description = "Invite a user as host")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @PostMapping("/invite")
-    public ResponseEntity<Void> inviteUser(@RequestBody @Valid UserInviteRequest request) throws MessagingException {
+    public ResponseEntity<Void> inviteUser(@RequestBody @Valid UserInviteRequest request) {
+        userService.inviteUser(request);
         return ResponseEntity.ok().build();
     }
 

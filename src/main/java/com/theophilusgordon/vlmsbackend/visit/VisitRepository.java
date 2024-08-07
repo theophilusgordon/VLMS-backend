@@ -33,4 +33,5 @@ public interface VisitRepository extends JpaRepository<Visit, Integer> {
     @Query("SELECT COUNT(c) FROM Visit c WHERE c.checkInDateTime BETWEEN :startOfYear AND :endOfYear")
     Long countByCheckinDateBetweenThisYear();
 
+    boolean existsByGuestIdAndCheckOutDateTimeIsNull(UUID id);
 }

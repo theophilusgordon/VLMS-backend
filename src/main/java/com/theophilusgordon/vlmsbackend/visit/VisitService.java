@@ -1,6 +1,7 @@
 package com.theophilusgordon.vlmsbackend.visit;
 
 import com.google.zxing.WriterException;
+import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.guest.Guest;
@@ -16,10 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -34,19 +35,26 @@ public class VisitService {
     private final EmailService emailService;
 
 
-    public VisitResponse checkIn(VisitRequest request) throws IOException, WriterException, MessagingException {
+    public VisitResponse checkIn(VisitRequest request) {
         var checkin = new Visit();
         checkin.setCheckInDateTime(LocalDateTime.now());
-        Guest guest = guestRepository.findById(UUID.fromString(request.guestId())).orElseThrow(() -> new NotFoundException("Guest", request.guestId()));
+
+        Guest guest = guestRepository.findById(UUID.fromString(request.guestId()))
+                .orElseThrow(() -> new NotFoundException("Guest", request.guestId()));
         checkin.setGuest(guest);
-        User host = hostRepository.findById(UUID.fromString(request.hostId())).orElseThrow(() -> new NotFoundException("User", request.hostId()));
+        if(checkInRepository.existsByGuestIdAndCheckOutDateTimeIsNull(guest.getId()))
+            throw new BadRequestException(ExceptionConstants.GUEST_ALREADY_CHECKED_IN);
+
+        User host = hostRepository.findById(UUID.fromString(request.hostId()))
+                .orElseThrow(() -> new NotFoundException("User", request.hostId()));
+
         checkin.setHost(host);
-        checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest)));
+        checkin.setQrCode(qrCodeService.generateQRCodeImage(String.valueOf(guest.getId())));
         checkInRepository.save(checkin);
 
         emailService.sendCheckinSuccessEmail(
                 guest.getEmail(),
-                "Successful Check-In at VLMS - Your QR Code for Future Visits",
+                guest.getFirstName(),
                 checkin.getQrCode()
         );
 

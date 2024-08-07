@@ -1,10 +1,8 @@
 package com.theophilusgordon.vlmsbackend.user;
 
 import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
-import com.theophilusgordon.vlmsbackend.constants.MailConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
-import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.token.TokenType;
@@ -29,7 +27,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
-    private final UserDetailsServiceImpl userDetailsService;
 
     public void inviteUser(UserInviteRequest request) {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(request.email())))
@@ -60,7 +57,6 @@ public class UserService {
     }
 
     public void resetPassword(PasswordResetRequest request) {
-        System.out.println("getting here");
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new NotFoundException("User", request.email()));
 

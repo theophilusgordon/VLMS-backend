@@ -23,4 +23,5 @@ public final class ExceptionConstants {
     public static final String USER_ALREADY_ACTIVATED = "User account already activated with email: ";
     public static final String EMAIL_SEND_FAILURE = "Failed to send email";
     public static final String EXPIRED_TOKEN = "Token has expired";
+    public static final String GUEST_ALREADY_CHECKED_IN = "Guest is already checked in";
 }

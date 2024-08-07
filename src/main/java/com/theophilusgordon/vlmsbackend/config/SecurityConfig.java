@@ -31,10 +31,11 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/v1/check-in/**",
-            "/api/v1/check-out/**",
+            "/api/v1/visits/checkin",
+            "/api/v1/visits/checkout/**",
             "/api/v1/users/forgot-password",
             "/api/v1/users/reset-password",
+            "/api/v1/guests/**",
     };
 
     private final JwtAuthFilter jwtAuthFilter;

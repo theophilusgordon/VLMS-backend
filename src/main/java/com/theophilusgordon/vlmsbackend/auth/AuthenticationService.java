@@ -40,7 +40,6 @@ public void activateAccount(AccountActivationRequest request) {
     User invitedUser = userRepository.findByEmail(request.email())
             .orElseThrow(() -> new BadRequestException(ExceptionConstants.USER_NOT_INVITED + request.email()));
 
-    System.out.println("invited user status: " + invitedUser.toString());
     if (invitedUser.getStatus() != Status.INVITED)
         throw new BadRequestException(ExceptionConstants.USER_ALREADY_ACTIVATED + request.email());
 

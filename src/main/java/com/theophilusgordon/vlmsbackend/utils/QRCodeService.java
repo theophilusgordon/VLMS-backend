@@ -15,7 +15,8 @@ import java.io.IOException;
 @Service
 public class QRCodeService {
 
-    public byte[] generateQRCodeImage(String barcodeText) throws WriterException, IOException {
+   public byte[] generateQRCodeImage(String barcodeText) {
+    try {
         QRCodeWriter barcodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, 200, 200);
 
@@ -23,5 +24,9 @@ public class QRCodeService {
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
         ImageIO.write(qrCodeImage, "PNG", pngOutputStream);
         return pngOutputStream.toByteArray();
+    } catch (WriterException | IOException e) {
+        System.err.println("Could not generate QR code: " + e.getMessage());
+        return new byte[0];
     }
+}
 }

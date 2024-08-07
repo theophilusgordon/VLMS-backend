@@ -131,8 +131,7 @@ public class EmailService {
                     MULTIPART_MODE_MIXED,
                     UTF_8.name());
 
-            User user = (User) userDetailsService.loadUserByUsername(emailDetails.getRecipient());
-            Context context = getContext(emailDetails, user);
+            Context context = getContext(emailDetails);
 
             helper.setFrom(from);
             helper.setTo(emailDetails.getRecipient());
@@ -148,10 +147,9 @@ public class EmailService {
         }
     }
 
-    private static Context getContext(EmailDetails emailDetails, User user) {
+    private static Context getContext(EmailDetails emailDetails) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("firstname", user.getFirstName());
         properties.put("recipient", emailDetails.getRecipient());
         properties.put("otp", emailDetails.getOtp());
         properties.put("confirmationUrl", emailDetails.getActivationUrl());

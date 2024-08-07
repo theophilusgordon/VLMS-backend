@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("visits")
+@RequestMapping("/api/v1/visits")
 public class VisitController {
     private final VisitService visitService;
 
@@ -26,7 +26,7 @@ public class VisitController {
     }
 
     @Operation(summary = "Check-out a guest", description = "Check out a guest after visit")
-    @PutMapping("/checkout/{checkinId}")
+    @PatchMapping("/checkout/{checkinId}")
     public ResponseEntity<VisitResponse> checkOut(@PathVariable Integer checkinId) {
         return ResponseEntity.ok(visitService.checkOut(checkinId));
     }
