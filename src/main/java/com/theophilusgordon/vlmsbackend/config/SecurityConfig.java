@@ -34,6 +34,7 @@ public class SecurityConfig {
             "/api/v1/check-in/**",
             "/api/v1/check-out/**",
             "/api/v1/users/forgot-password",
+            "/api/v1/users/reset-password",
     };
 
     private final JwtAuthFilter jwtAuthFilter;

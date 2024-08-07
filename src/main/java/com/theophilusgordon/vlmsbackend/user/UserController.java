@@ -23,28 +23,28 @@ public class UserController {
     @Operation(summary = "Invite a user", description = "Invite a user as host")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @PostMapping("/invite")
-    public ResponseEntity<UserInviteResponse> inviteUser(@RequestBody @Valid UserInviteRequest request) throws MessagingException {
-        return ResponseEntity.ok(userService.inviteUser(request));
+    public ResponseEntity<Void> inviteUser(@RequestBody @Valid UserInviteRequest request) throws MessagingException {
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Request password change", description = "Request password change for user")
     @PostMapping("/forgot-password")
-    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid PasswordRequestResetRequest request) throws MessagingException {
+    public ResponseEntity<Void> requestPasswordReset(@RequestBody @Valid PasswordRequestResetRequest request) {
         userService.requestResetPassword(request.email());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Reset password", description = "Reset password for user")
-    @PatchMapping("/reset-password/{id}")
-    public ResponseEntity<Void> resetPassword(@PathVariable String id, @RequestBody @Valid PasswordResetRequest request) throws MessagingException {
-        userService.resetPassword(id, request);
+    @PatchMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid PasswordResetRequest request) {
+        userService.resetPassword(request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update user", description = "Update user information")
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody @Valid UserUpdateRequest request) {
-        return ResponseEntity.ok(userService.updateUser(id, request));
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(Principal principal, @RequestBody @Valid UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateUser(principal, request));
     }
 
     @Operation(summary = "Change password", description = "Change password for user")

@@ -4,11 +4,11 @@ import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.constants.MailConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
+import com.theophilusgordon.vlmsbackend.security.userdetailsservice.UserDetailsServiceImpl;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.token.TokenType;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +29,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public UserInviteResponse inviteUser(UserInviteRequest request) {
+    public void inviteUser(UserInviteRequest request) {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(request.email())))
             throw new BadRequestException(ExceptionConstants.USER_ALREADY_EXISTS + request.email());
 
@@ -39,21 +40,15 @@ public class UserService {
                 .role(this.createRole(request.role()))
                 .status(Status.INVITED)
                 .build();
-        var savedUser = userRepository.save(user);
+        userRepository.save(user);
         var otp = generateAndSaveActivationToken(user);
         emailService.sendActivationEmail(
                 user.getEmail(),
                 otp
         );
-        return UserInviteResponse.builder()
-                .id(String.valueOf(savedUser.getId()))
-                .email(savedUser.getEmail())
-                .role(String.valueOf(savedUser.getRole()))
-                .status(savedUser.getStatus())
-                .build();
     }
 
-    public void requestResetPassword(String email) throws MessagingException {
+    public void requestResetPassword(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
         var otp = generateAndSaveActivationToken(user);
@@ -64,29 +59,31 @@ public class UserService {
         );
     }
 
-    public void resetPassword(String id, PasswordResetRequest request) throws MessagingException {
-        var user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new NotFoundException("User", id));
+    public void resetPassword(PasswordResetRequest request) {
+        System.out.println("getting here");
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new NotFoundException("User", request.email()));
 
-        if (!request.password().equals(request.confirmPassword())) {
+        if(!tokenRepository.existsByUserAndToken(user, request.otp()))
+            throw new BadRequestException(ExceptionConstants.INVALID_TOKEN);
+
+        if (!request.password().equals(request.confirmPassword()))
             throw new BadRequestException(ExceptionConstants.PASSWORDS_MISMATCH);
-        }
 
         user.setPassword(passwordEncoder.encode(request.password()));
         userRepository.save(user);
         emailService.sendPasswordResetSuccessEmail(user.getEmail());
     }
 
-    public User updateUser(String id, UserUpdateRequest request) {
-        var user = userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new NotFoundException("User", id));
+    public User updateUser(Principal principal, UserUpdateRequest request) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         userRepository.save(UserMapper.userUpdateRequestToUser(user, request));
         return user;
     }
 
     public void changePassword(PasswordChangeRequest request, Principal connectedUser) {
 
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
             throw new BadRequestException(ExceptionConstants.INCORRECT_PASSWORD);
@@ -98,6 +95,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.newPassword()));
 
         userRepository.save(user);
+
+        emailService.sendPasswordResetSuccessEmail(user.getEmail());
     }
 
     public User getUser(String id) {

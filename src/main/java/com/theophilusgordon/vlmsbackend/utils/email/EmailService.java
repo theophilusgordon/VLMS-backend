@@ -78,7 +78,7 @@ public class EmailService {
     public void sendPasswordResetSuccessEmail(String recipient) {
         EmailDetails emailDetails = EmailDetails.builder()
                 .recipient(recipient)
-                .template(EmailTemplate.REQUEST_PASSWORD_RESET)
+                .template(EmailTemplate.PASSWORD_RESET_SUCCESS)
                 .subject("Password reset successful")
                 .loginUrl(frontendUrl + "/login")
                 .build();
