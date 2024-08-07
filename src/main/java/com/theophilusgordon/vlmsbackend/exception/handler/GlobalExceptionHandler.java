@@ -7,7 +7,6 @@ import org.eclipse.angus.mail.smtp.SMTPSendFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -43,15 +42,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ExceptionResponse> handleAccessDeniedException() {
+    @ExceptionHandler({ExpiredJwtException.class, AccessDeniedException.class})
+    public ResponseEntity<ExceptionResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setMessage(ExceptionConstants.ACCESS_DENIED);
-        exceptionResponse.setStatus(UNAUTHORIZED.value());
-        return new ResponseEntity<>(exceptionResponse, UNAUTHORIZED);
+        exceptionResponse.setMessage(ex.getMessage());
+        exceptionResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler({BadCredentialsException.class})
     public ResponseEntity<ExceptionResponse> handleBadCredentialsException() {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setMessage(ExceptionConstants.BAD_CREDENTIALS);
@@ -85,11 +84,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ExceptionResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setMessage(ExceptionConstants.EXPIRED_TOKEN);
-        exceptionResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+        exceptionResponse.setMessage(ex.getMessage());
+        exceptionResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

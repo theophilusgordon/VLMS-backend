@@ -2,7 +2,6 @@ package com.theophilusgordon.vlmsbackend.user;
 
 import com.theophilusgordon.vlmsbackend.constants.AuthConstants;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
