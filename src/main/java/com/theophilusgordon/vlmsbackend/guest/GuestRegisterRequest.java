@@ -14,7 +14,6 @@ public record GuestRegisterRequest(
         String email,
         @NotBlank(message = "Phone is required")
         String phone,
-        String profilePhotoUrl,
         @NotBlank(message = "Company is required")
         String company
 ) {

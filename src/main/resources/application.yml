@@ -32,7 +32,9 @@ cloud:
   aws:
     credentials:
       access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+    s3:
+        bucket: ${AWS_S3_BUCKET}
     region: ${AWS_REGION}
 
 application:

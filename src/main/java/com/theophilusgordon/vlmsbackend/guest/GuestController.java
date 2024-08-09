@@ -6,9 +6,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,9 +20,11 @@ public class GuestController {
     private final GuestService guestService;
 
     @Operation(summary = "Register a guest", description = "Register a guest")
-    @PostMapping
-    public ResponseEntity<Guest> registerGuest(@RequestBody @Valid GuestRegisterRequest request) {
-        return ResponseEntity.ok(service.registerGuest(request));
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Guest> registerGuest(
+            @ModelAttribute @Valid GuestRegisterRequest request,
+            @RequestParam("profilePhoto") MultipartFile profilePhoto) {
+        return ResponseEntity.ok(service.registerGuest(request, profilePhoto));
     }
 
     @Operation(summary = "Get all guests", description = "Get all guests paginated. Default page is 0, default size is 10")

@@ -33,10 +33,6 @@ public class StatisticsService {
 
         long totalCheckinsByYear = visitRepository.countByCheckinDateBetweenThisYear();
 
-        double averageCheckinsPerDay = (double) totalCheckins / 365;
-        double averageCheckinsPerWeek = (double) totalCheckins / 52;
-        double averageCheckinsPerMonth = (double) totalCheckins / 12;
-
         return StatisticsResponse.builder()
                 .totalHosts(totalHosts)
                 .totalGuests(totalGuests)
@@ -46,10 +42,6 @@ public class StatisticsService {
                 .totalCheckinsByWeek(totalCheckinsByWeek)
                 .totalCheckinsByMonth(totalCheckinsByMonth)
                 .totalCheckinsByYear(totalCheckinsByYear)
-                .averageCheckinsPerDay(averageCheckinsPerDay)
-                .averageCheckinsPerWeek(averageCheckinsPerWeek)
-                .averageCheckinsPerMonth(averageCheckinsPerMonth)
-                .averageCheckinsPerYear((double) totalCheckins)
                 .build();
     }
 }

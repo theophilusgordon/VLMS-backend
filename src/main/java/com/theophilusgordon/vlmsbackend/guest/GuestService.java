@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.utils.QRCodeService;
+import com.theophilusgordon.vlmsbackend.utils.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -17,17 +20,23 @@ import java.util.UUID;
 public class GuestService {
     private final GuestRepository guestRepository;
     private final ObjectMapper objectMapper;
+    private final S3Service s3Service;
     private final QRCodeService qrCodeService;
 
 // TODO: Implement method to check in a guest with QR code details
 
-    public Guest registerGuest(GuestRegisterRequest request){
+    public Guest registerGuest(GuestRegisterRequest request, MultipartFile profilePhoto) {
         guestRepository.findByEmail(request.email())
             .ifPresent(guest -> {
                 throw new BadRequestException("Email already exists");
             });
 
-        Guest guest = objectMapper.convertValue(request, Guest.class);
+        String profilePhotoUrl = s3Service.uploadEncodedImage(profilePhoto.getOriginalFilename());
+
+        Map<String, Object> guestMap = objectMapper.convertValue(request, Map.class);
+        guestMap.put("profilePhoto", profilePhotoUrl);
+
+        Guest guest = objectMapper.convertValue(guestMap, Guest.class);
         return guestRepository.save(guest);
     }
 

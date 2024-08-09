@@ -1,6 +1,5 @@
 package com.theophilusgordon.vlmsbackend.visit;
 
-import com.google.zxing.WriterException;
 import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.exception.BadRequestException;
 import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
@@ -10,7 +9,6 @@ import com.theophilusgordon.vlmsbackend.user.User;
 import com.theophilusgordon.vlmsbackend.user.UserRepository;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import com.theophilusgordon.vlmsbackend.utils.QRCodeService;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -188,7 +185,7 @@ public class VisitService {
                         .lastName(guest.getLastName())
                         .phone(guest.getPhone())
                         .email(guest.getEmail())
-                        .profilePhotoUrl(guest.getProfilePhotoUrl())
+                        .profilePhoto(guest.getProfilePhoto())
                         .build())
                 .host(User.builder()
                         .id(host.getId())

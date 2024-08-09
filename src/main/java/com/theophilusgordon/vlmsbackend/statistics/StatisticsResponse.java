@@ -22,15 +22,4 @@ public class StatisticsResponse {
     private long totalCheckinsByHostAndCustomDateRange;
     private long totalCheckinsByGuestAndCustomDateRange;
     private long totalCheckinsByHostAndGuestAndCustomDateRange;
-    private double averageCheckinsPerDay;
-    private double averageCheckinsPerWeek;
-    private double averageCheckinsPerMonth;
-    private double averageCheckinsPerYear;
-    private double averageCheckinsPerCustomDateRange;
-    private double averageCheckinsPerHost;
-    private double averageCheckinsPerGuest;
-    private double averageCheckinsPerHostAndGuest;
-    private double averageCheckinsPerHostAndCustomDateRange;
-    private double averageCheckinsPerGuestAndCustomDateRange;
-    private double averageCheckinsPerHostAndGuestAndCustomDateRange;
 }

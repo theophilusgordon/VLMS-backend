@@ -9,4 +9,5 @@ public final class Patterns {
     public static final String PHONE_NUMBER = "^\\+(?:[0-9] ?){6,14}[0-9]$";
     public static final String ROLE = "(?i)USER|ADMIN|HOST";
     public static final String EMAIL = "^(.+)@(.+)$";
+    public static final String ENCODED_IMAGE_INFO = ".*\\.(jpg|jpeg|png)$";
 }

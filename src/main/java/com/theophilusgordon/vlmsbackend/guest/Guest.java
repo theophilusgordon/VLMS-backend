@@ -28,8 +28,8 @@ public class Guest {
     private String email;
     @JsonProperty("phone")
     private String phone;
-    @JsonProperty("profilePhotoUrl")
-    private String profilePhotoUrl;
+    @JsonProperty("profilePhoto")
+    private String profilePhoto;
     @JsonProperty("company")
     private String company;
 

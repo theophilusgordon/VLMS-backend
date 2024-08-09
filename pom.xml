@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.theophilusgordon</groupId>
-    <artifactId>guest-logix-server</artifactId>
+    <artifactId>vlms-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>guest-logix-server</name>
-    <description>guest-logix-server</description>
+    <name>vlms-backend</name>
+    <description>API for Visitors LogBook Management System</description>
     <properties>
         <java.version>17</java.version>
     </properties>

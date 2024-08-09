@@ -25,4 +25,6 @@ public final class ExceptionConstants {
     public static final String EXPIRED_TOKEN = "Token has expired";
     public static final String GUEST_ALREADY_CHECKED_IN = "Guest is already checked in";
     public static final String GUEST_ALREADY_CHECKED_OUT = "Guest is already checked out";
+    public static final String INVALID_IMAGE = "Invalid image: ";
+    public static final String UPLOAD_FAIL = "Failed to upload image: ";
 }
