@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Size;
         @Size(max = 50, message = "Last name must be less than 50 characters")
         String lastName,
         @Pattern(regexp = Patterns.PHONE_NUMBER, message = "Phone number is not valid")
-        String phone,
-        String profilePhotoUrl
+        String phone
     ) {
 }

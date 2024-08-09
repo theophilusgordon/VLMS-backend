@@ -2,7 +2,6 @@ package com.theophilusgordon.vlmsbackend.utils;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.constants.Patterns;
 import com.theophilusgordon.vlmsbackend.exception.UploadFailException;

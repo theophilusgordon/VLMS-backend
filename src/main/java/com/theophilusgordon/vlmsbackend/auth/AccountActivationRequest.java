@@ -22,7 +22,6 @@ public record AccountActivationRequest(
         @NotBlank(message = "Email is required")
         @Email
         String email,
-        String profilePhotoUrl,
         @NotBlank(message = "Password is required")
         @Pattern(regexp = Patterns.PASSWORD, message = ExceptionConstants.INVALID_PASSWORD)
         String password,

@@ -14,8 +14,6 @@ public class UserMapper {
             user.setLastName(request.lastName());
         if(request.phone() != null)
             user.setPhone(request.phone());
-        if(request.profilePhotoUrl() != null)
-            user.setProfilePhotoUrl(request.profilePhotoUrl());
         return user;
     }
 }

@@ -50,7 +50,6 @@ public void activateAccount(AccountActivationRequest request) {
     invitedUser.setMiddleName(request.middleName());
     invitedUser.setLastName(request.lastName());
     invitedUser.setPhone(request.phone());
-    invitedUser.setProfilePhotoUrl(request.profilePhotoUrl());
     invitedUser.setPassword(passwordEncoder.encode(request.password()));
     invitedUser.setStatus(Status.ACTIVATED);
     userRepository.save(invitedUser);

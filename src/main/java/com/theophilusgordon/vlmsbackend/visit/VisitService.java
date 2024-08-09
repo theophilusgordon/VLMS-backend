@@ -196,7 +196,7 @@ public class VisitService {
                         .phone(host.getPhone())
                         .email(host.getEmail())
                         .department(host.getDepartment())
-                        .profilePhotoUrl(host.getProfilePhotoUrl())
+                        .profilePhoto(host.getProfilePhoto())
                         .build())
                 .build();
     }

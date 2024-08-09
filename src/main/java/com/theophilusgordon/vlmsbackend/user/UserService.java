@@ -6,6 +6,7 @@ import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.token.TokenType;
+import com.theophilusgordon.vlmsbackend.utils.S3Service;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.security.SecureRandom;
@@ -27,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final S3Service s3Service;
 
     public void inviteUser(UserInviteRequest request) {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(request.email())))
@@ -75,6 +78,14 @@ public class UserService {
         User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         userRepository.save(UserMapper.userUpdateRequestToUser(user, request));
         return user;
+    }
+
+    public String updateUserProfilePhoto(Principal principal, MultipartFile profilePhoto) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        String profilePhotoUrl = s3Service.uploadEncodedImage(profilePhoto.getOriginalFilename());
+        user.setProfilePhoto(profilePhotoUrl);
+        userRepository.save(user);
+        return profilePhotoUrl;
     }
 
     public void changePassword(PasswordChangeRequest request, Principal connectedUser) {

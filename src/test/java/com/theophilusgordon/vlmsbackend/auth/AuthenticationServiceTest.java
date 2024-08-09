@@ -77,7 +77,6 @@ class AuthenticationServiceTest {
         AccountActivationRequest authRequest = new AccountActivationRequest(
                 "First", "Middle",
                 "Lastname", "", "test@example.com",
-                "http://example.com/photo",
                 "password",
                 "password",
                 "123456");
@@ -100,7 +99,6 @@ class AuthenticationServiceTest {
         AccountActivationRequest authRequest = new AccountActivationRequest(
                 "First", "Middle",
                 "Lastname", "", "test@example.com",
-                "http://example.com/photo",
                 "password",
                 "password",
                 "123456");
@@ -115,7 +113,6 @@ class AuthenticationServiceTest {
         AccountActivationRequest authRequest = new AccountActivationRequest(
                 "First", "Middle",
                 "Lastname", "", "test@example.com",
-                "http://example.com/photo",
                 "password",
                 "password",
                 "123456");
@@ -133,7 +130,6 @@ class AuthenticationServiceTest {
         AccountActivationRequest authRequest = new AccountActivationRequest(
                 "First", "Middle",
                 "Lastname", "", "test@example.com",
-                "http://example.com/photo",
                 "password",
                 "password",
                 "123456");        User invitedUser = new User();

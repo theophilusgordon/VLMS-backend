@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 
@@ -45,6 +46,12 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<User> updateUser(Principal principal, @RequestBody @Valid UserUpdateRequest request) {
         return ResponseEntity.ok(userService.updateUser(principal, request));
+    }
+
+    @Operation(summary = "Update profile photo", description = "Update user profile photo")
+    @PatchMapping("/update-profile-photo")
+    public ResponseEntity<String> updateUserProfilePhoto(Principal principal, @RequestParam("profilePhoto") MultipartFile profilePhoto) {
+        return ResponseEntity.ok(userService.updateUserProfilePhoto(principal, profilePhoto));
     }
 
     @Operation(summary = "Change password", description = "Change password for user")

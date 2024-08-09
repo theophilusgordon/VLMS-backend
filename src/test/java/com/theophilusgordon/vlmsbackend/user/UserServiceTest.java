@@ -171,8 +171,7 @@ class UserServiceTest {
         UserUpdateRequest request = new UserUpdateRequest("Francisca",
                 "Aikins",
                 "Baffoe",
-                "0555555555",
-                "url");
+                "0555555555");
 
         User updatedUser = userService.updateUser(principal, request);
 

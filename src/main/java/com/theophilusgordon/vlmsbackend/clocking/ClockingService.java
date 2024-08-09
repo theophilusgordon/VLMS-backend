@@ -84,7 +84,7 @@ public class ClockingService {
                         .middleName(user.getMiddleName())
                         .lastName(user.getLastName())
                         .phone(user.getPhone())
-                        .profilePhotoUrl(user.getProfilePhotoUrl())
+                        .profilePhoto(user.getProfilePhoto())
                         .department(user.getDepartment())
                         .role(user.getRole())
                         .build())

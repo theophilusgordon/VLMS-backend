@@ -30,7 +30,7 @@ public class User implements UserDetails, Principal {
     private String lastName;
     private String phone;
     private String email;
-    private String profilePhotoUrl;
+    private String profilePhoto;
     private String department;
     private String position;
     private Boolean accountLocked = false;
