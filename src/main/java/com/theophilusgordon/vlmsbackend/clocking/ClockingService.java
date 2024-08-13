@@ -49,11 +49,11 @@ public class ClockingService {
                 });
     }
 
-    public Page<ClockingResponse> getClockingsByUserId(String userId, Pageable pageable) {
-        return clockingRepository.findAllByUserId(UUID.fromString(userId), pageable)
+    public Page<ClockingResponse> getClockingsByUserId(UUID userId, Pageable pageable) {
+        return clockingRepository.findAllByUserId(userId, pageable)
                 .map(clocking -> {
                     User user = userRepository.findById(clocking.getUserId())
-                            .orElseThrow(() -> new NotFoundException("User", String.valueOf(clocking.getUserId())));
+                            .orElseThrow(() -> new NotFoundException("User", clocking.getUserId()));
                     return this.buildClockingResponse(clocking, user);
                 });
     }

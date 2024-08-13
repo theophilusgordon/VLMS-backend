@@ -11,6 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @RestController
@@ -55,35 +57,35 @@ public class VisitController {
     @Operation(summary = "Get all visits by guest", description = "Get all visits for a guest by ID")
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @GetMapping("/guest/{guestId}")
-    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByGuest(@PathVariable String guestId) {
+    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByGuest(@PathVariable UUID guestId) {
         return ResponseEntity.ok(visitService.getCheckInsByGuest(guestId));
     }
 
     @Operation(summary = "Get all guests by host", description = "Get all guests that have visited a host by host ID")
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @GetMapping("/host/{hostId}")
-    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByHost(@PathVariable String hostId) {
+    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByHost(@PathVariable UUID hostId) {
         return ResponseEntity.ok(visitService.getCheckInsByHost(hostId));
     }
 
     @Operation(summary = "Get all visits by check-in date", description = "Get all visits by check-in date")
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @GetMapping("/date/{checkInDate}")
-    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByCheckInDate(@PathVariable String checkInDate) {
+    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByCheckInDate(@PathVariable LocalDateTime checkInDate) {
         return ResponseEntity.ok(visitService.getCheckInsByCheckInDate(checkInDate));
     }
 
     @Operation(summary = "Get all visits for a period", description = "Get all visits for a period by start and end date")
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @GetMapping("/period/{start}/{end}")
-    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByPeriod(@PathVariable String start, @PathVariable String end) {
+    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByPeriod(@PathVariable LocalDateTime start, @PathVariable LocalDateTime end) {
         return ResponseEntity.ok(visitService.getCheckInsByPeriod(start, end));
     }
 
     @Operation(summary = "Get all visits for a host in a period", description = "Get all visits for a host in a period by host ID, start and end date")
     @PreAuthorize(AuthConstants.ADMIN_HOST_AUTHORIZATION)
     @GetMapping("/host-period/{hostId}/{start}/{end}")
-    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByHostPeriod(@PathVariable String hostId, @PathVariable String start, @PathVariable String end) {
+    public ResponseEntity<Iterable<VisitResponse>> getCheckInsByHostPeriod(@PathVariable UUID hostId, @PathVariable LocalDateTime start, @PathVariable LocalDateTime end) {
         return ResponseEntity.ok(visitService.getCheckInsByHostAndPeriod(hostId, start, end));
     }
 }

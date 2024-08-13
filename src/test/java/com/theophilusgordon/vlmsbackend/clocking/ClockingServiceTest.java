@@ -130,7 +130,7 @@ class ClockingServiceTest {
         when(clockingRepository.findAllByUserId(userId, pageable)).thenReturn(clockingPage);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        Page<ClockingResponse> responsePage = clockingService.getClockingsByUserId(userId.toString(), pageable);
+        Page<ClockingResponse> responsePage = clockingService.getClockingsByUserId(userId, pageable);
 
         assertNotNull(responsePage);
         assertEquals(1, responsePage.getTotalElements());

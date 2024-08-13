@@ -166,7 +166,7 @@ class VisitServiceTest {
         when(guestRepository.existsById(any(UUID.class))).thenReturn(true);
         when(visitRepository.findByGuestId(any(UUID.class))).thenReturn(Collections.singletonList(visit));
 
-        List<VisitResponse> result = visitService.getCheckInsByGuest(guest.getId().toString());
+        List<VisitResponse> result = visitService.getCheckInsByGuest(guest.getId());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -176,7 +176,7 @@ class VisitServiceTest {
     void testGetCheckInsByGuest_NotFound() {
         when(guestRepository.existsById(any(UUID.class))).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> visitService.getCheckInsByGuest(guest.getId().toString()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> visitService.getCheckInsByGuest(guest.getId()));
         assertEquals(exception.getMessage(), exception.getMessage());
     }
 
@@ -185,7 +185,7 @@ class VisitServiceTest {
         when(userRepository.existsById(any(UUID.class))).thenReturn(true);
         when(visitRepository.findByHostId(any(UUID.class))).thenReturn(Collections.singletonList(visit));
 
-        List<VisitResponse> result = visitService.getCheckInsByHost(host.getId().toString());
+        List<VisitResponse> result = visitService.getCheckInsByHost(host.getId());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -195,7 +195,7 @@ class VisitServiceTest {
     void testGetCheckInsByHost_NotFound() {
         when(userRepository.existsById(any(UUID.class))).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> visitService.getCheckInsByHost(host.getId().toString()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> visitService.getCheckInsByHost(host.getId()));
         assertEquals(exception.getMessage(), exception.getMessage());
     }
 
@@ -204,7 +204,7 @@ class VisitServiceTest {
         LocalDateTime dateTime = LocalDateTime.now();
         when(visitRepository.findByCheckInDateTime(any(LocalDateTime.class))).thenReturn(Collections.singletonList(visit));
 
-        List<VisitResponse> result = visitService.getCheckInsByCheckInDate(dateTime.toString());
+        List<VisitResponse> result = visitService.getCheckInsByCheckInDate(dateTime);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -212,14 +212,14 @@ class VisitServiceTest {
 
     @Test
     void testGetCheckInsByCheckInDate_InvalidFormat() {
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> visitService.getCheckInsByCheckInDate("invalid-date"));
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> visitService.getCheckInsByCheckInDate(LocalDateTime.parse("invalid-date")));
         assertEquals("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss", exception.getMessage());
     }
 
     @Test
     void testGetCheckInsByPeriod_Success() {
-        String start = "2023-01-01T00:00:00";
-        String end = "2023-12-31T23:59:59";
+        LocalDateTime start = LocalDateTime.parse("2023-01-01T00:00:00");
+        LocalDateTime end = LocalDateTime.parse("2023-12-31T23:59:59");
         when(visitRepository.findByCheckInDateTimeBetween(any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(Collections.singletonList(visit));
 
         List<VisitResponse> result = visitService.getCheckInsByPeriod(start, end);
@@ -254,8 +254,8 @@ class VisitServiceTest {
 
         @Test
         void testGetTotalVisitsBetween_Success() {
-            String start = "2023-01-01T00:00:00";
-            String end = "2023-12-31T23:59:59";
+            LocalDateTime start = LocalDateTime.parse("2023-01-01T00:00:00");
+            LocalDateTime end = LocalDateTime.parse("2023-12-31T23:59:59");
             List<Visit> visits = List.of(visit);
 
             when(visitRepository.findByCheckInDateTimeBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -269,8 +269,8 @@ class VisitServiceTest {
 
         @Test
         void testGetTotalVisitsBetween_InvalidFormat() {
-            String start = "invalid-date";
-            String end = "2023-12-31T23:59:59";
+            LocalDateTime start = LocalDateTime.parse("invalid-date");
+            LocalDateTime end = LocalDateTime.parse("2023-12-31T23:59:59");
 
             BadRequestException exception = assertThrows(BadRequestException.class, () -> visitService.getTotalVisitsBetween(start, end));
             assertEquals("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss", exception.getMessage());

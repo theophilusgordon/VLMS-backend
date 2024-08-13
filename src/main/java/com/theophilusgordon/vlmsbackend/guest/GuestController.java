@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/guests")
@@ -46,7 +48,7 @@ public class GuestController {
     @Operation(summary = "Get a guest", description = "Get a guest by ID")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/{id}")
-    public ResponseEntity<Guest> getGuest(@PathVariable String id) {
+    public ResponseEntity<Guest> getGuest(@PathVariable UUID id) {
         return ResponseEntity.ok(service.getGuest(id));
     }
 }

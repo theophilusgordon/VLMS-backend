@@ -6,6 +6,7 @@ import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.token.TokenType;
+import com.theophilusgordon.vlmsbackend.utils.Encoder;
 import com.theophilusgordon.vlmsbackend.utils.S3Service;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,9 @@ public class UserService {
 
     public String updateUserProfilePhoto(Principal principal, MultipartFile profilePhoto) {
         User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        String profilePhotoUrl = s3Service.uploadEncodedImage(profilePhoto.getOriginalFilename());
+        s3Service.deleteImage(user.getProfilePhoto());
+        String encodedImage = Encoder.encodeImageToBase64(profilePhoto);
+        String profilePhotoUrl = s3Service.uploadEncodedImage(encodedImage);
         user.setProfilePhoto(profilePhotoUrl);
         userRepository.save(user);
         return profilePhotoUrl;
@@ -106,9 +109,9 @@ public class UserService {
         emailService.sendPasswordResetSuccessEmail(user.getEmail());
     }
 
-    public User getUser(String id) {
-        return userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new NotFoundException("User", id));
+    public User getUser(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User", String.valueOf(id)));
     }
 
     public Page<User> getUsers(Pageable pageable) {
@@ -127,11 +130,11 @@ public class UserService {
         return userRepository.countByRole(Role.HOST);
     }
 
-    public void deleteUser(String id) {
-        if (!userRepository.existsById(UUID.fromString(id))) {
-            throw new NotFoundException("User", id);
+    public void deleteUser(UUID id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException("User", String.valueOf(id));
         }
-        userRepository.deleteById(UUID.fromString(id));
+        userRepository.deleteById(id);
     }
 
     private Role createRole(String value) {

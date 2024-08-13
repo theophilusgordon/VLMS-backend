@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -168,10 +169,11 @@ class UserServiceTest {
         when(principal.getPrincipal()).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UserUpdateRequest request = new UserUpdateRequest("Francisca",
+        UserUpdateRequest request = new UserUpdateRequest(
+                "Francisca",
                 "Aikins",
                 "Baffoe",
-                "0555555555");
+                "0241234567");
 
         User updatedUser = userService.updateUser(principal, request);
 
@@ -222,7 +224,7 @@ class UserServiceTest {
     void testGetUser_UserNotFound() {
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUser(UUID.randomUUID().toString()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUser(UUID.randomUUID()));
         assertEquals(exception.getMessage(), exception.getMessage());
     }
 
@@ -230,7 +232,7 @@ class UserServiceTest {
     void testGetUser_Success() {
         when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
 
-        User foundUser = userService.getUser(UUID.randomUUID().toString());
+        User foundUser = userService.getUser(UUID.randomUUID());
 
         assertNotNull(foundUser);
         assertEquals("test@example.com", foundUser.getEmail());
@@ -286,7 +288,7 @@ class UserServiceTest {
     void testDeleteUser_UserNotFound() {
         when(userRepository.existsById(any(UUID.class))).thenReturn(false);
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.deleteUser(UUID.randomUUID().toString()));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.deleteUser(UUID.randomUUID()));
         assertEquals(exception.getMessage(), exception.getMessage());
     }
 
@@ -294,7 +296,7 @@ class UserServiceTest {
     void testDeleteUser_Success() {
         when(userRepository.existsById(any(UUID.class))).thenReturn(true);
 
-        userService.deleteUser(UUID.randomUUID().toString());
+        userService.deleteUser(UUID.randomUUID());
 
         verify(userRepository, times(1)).deleteById(any(UUID.class));
     }

@@ -48,8 +48,8 @@ public class GuestService {
         return guestRepository.findAllByFullNameContaining(query, pageable);
     }
 
-    public Guest getGuest(@PathVariable String id){
-        return guestRepository.findById(UUID.fromString(id))
+    public Guest getGuest(@PathVariable UUID id){
+        return guestRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Guest", id));
     }
 

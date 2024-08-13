@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class ClockingController {
     @Operation(summary = "Get clockings by user id", description = "Get all clockings by user id")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/{userId}")
-    public ResponseEntity<Page<ClockingResponse>> getClockingsByUserId(@PathVariable String userId, Pageable pageable) {
+    public ResponseEntity<Page<ClockingResponse>> getClockingsByUserId(@PathVariable UUID userId, Pageable pageable) {
         return ResponseEntity.ok(clockingService.getClockingsByUserId(userId, pageable));
     }
 

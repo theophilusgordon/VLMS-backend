@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -74,7 +75,7 @@ public class UserController {
     @Operation(summary = "Get user", description = "Get user by ID")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable String id) {
+    public ResponseEntity<User> getUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
@@ -107,7 +108,7 @@ public class UserController {
     @Operation(summary = "Delete user", description = "Delete user by ID")
     @PreAuthorize(AuthConstants.ADMIN_AUTHORIZATION)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }

@@ -99,53 +99,45 @@ public class VisitService {
         return this.buildCheckInResponse(checkIn, checkIn.getGuest(), checkIn.getHost());
     }
 
-    public List<VisitResponse> getCheckInsByGuest(String guestId) {
-        if(!guestRepository.existsById(UUID.fromString(guestId)))
+    public List<VisitResponse> getCheckInsByGuest(UUID guestId) {
+        if(!guestRepository.existsById(guestId))
             throw new NotFoundException("Guest", guestId);
 
-        List<Visit> checkIns = checkInRepository.findByGuestId(UUID.fromString(guestId));
+        List<Visit> checkIns = checkInRepository.findByGuestId(guestId);
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
                 .toList();
     }
 
-    public List<VisitResponse> getCheckInsByHost(String hostId) {
-        if(!hostRepository.existsById(UUID.fromString(hostId)))
+    public List<VisitResponse> getCheckInsByHost(UUID hostId) {
+        if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
-        List<Visit> checkIns = checkInRepository.findByHostId(UUID.fromString(hostId));
+        List<Visit> checkIns = checkInRepository.findByHostId(hostId);
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
                 .toList();
     }
 
-    public List<VisitResponse> getCheckInsByCheckInDate(String checkInDate) {
-        LocalDateTime dateTime;
-        try {
-            dateTime = LocalDateTime.parse(checkInDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss");
-        }
-        var checkIns = checkInRepository.findByCheckInDateTime(dateTime);
+    public List<VisitResponse> getCheckInsByCheckInDate(LocalDateTime checkInDate) {
+        List<Visit> checkIns = checkInRepository.findByCheckInDateTime(checkInDate);
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost()))
                 .toList();
     }
 
-    public List<VisitResponse> getCheckInsByPeriod(String start, String end) {
-        Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
-        var checkIns = checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond());
+    public List<VisitResponse> getCheckInsByPeriod(LocalDateTime start, LocalDateTime end) {
+        var checkIns = checkInRepository.findByCheckInDateTimeBetween(start, end);
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost())).
                 toList();
     }
 
-    public List<VisitResponse> getCheckInsByHostAndPeriod(String hostId, String start, String end) {
-        if(!hostRepository.existsById(UUID.fromString(hostId)))
+    public List<VisitResponse> getCheckInsByHostAndPeriod(UUID hostId, LocalDateTime start, LocalDateTime end) {
+        if(!hostRepository.existsById(hostId))
             throw new NotFoundException("Host", hostId);
 
-        Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
-        var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(UUID.fromString(hostId), dates.getFirst(), dates.getSecond());
+        var checkIns = checkInRepository.findByHostIdAndCheckInDateTimeBetween(hostId, start, end);
         return checkIns.stream()
                 .map(visit -> this.buildCheckInResponse(visit, visit.getGuest(), visit.getHost())).
                 toList();
@@ -166,9 +158,8 @@ public class VisitService {
         return checkInRepository.countByCheckInDateTimeIsNotNullAndCheckOutDateTimeIsNull().intValue();
     }
 
-    public Integer getTotalVisitsBetween(String start, String end){
-        Pair<LocalDateTime, LocalDateTime> dates = validateAndParseDates(start, end);
-        return (int) StreamSupport.stream(checkInRepository.findByCheckInDateTimeBetween(dates.getFirst(), dates.getSecond()).spliterator(), false).count();
+    public Integer getTotalVisitsBetween(LocalDateTime start, LocalDateTime end){
+        return checkInRepository.findByCheckInDateTimeBetween(start, end).size();
     }
 
     private VisitResponse buildCheckInResponse(Visit checkIn, Guest guest, User host) {
@@ -199,22 +190,5 @@ public class VisitService {
                         .profilePhoto(host.getProfilePhoto())
                         .build())
                 .build();
-    }
-
-    private Pair<LocalDateTime, LocalDateTime> validateAndParseDates(String start, String end) {
-        LocalDateTime startDateTime;
-        LocalDateTime endDateTime;
-        try {
-            startDateTime = LocalDateTime.parse(start, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            endDateTime = LocalDateTime.parse(end, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("Invalid date format. Please use the ISO 8601 date time format: yyyy-MM-dd'T'HH:mm:ss");
-        }
-
-        if (startDateTime.isAfter(endDateTime)) {
-            throw new BadRequestException("Start date cannot be after end date");
-        }
-
-        return Pair.of(startDateTime, endDateTime);
     }
 }
