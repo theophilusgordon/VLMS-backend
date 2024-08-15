@@ -31,7 +31,7 @@ public class GuestService {
                 throw new BadRequestException("Email already exists");
             });
 
-        String profilePhotoUrl = s3Service.uploadEncodedImage(profilePhoto.getOriginalFilename());
+        String profilePhotoUrl = s3Service.uploadImage(profilePhoto);
 
         Map<String, Object> guestMap = objectMapper.convertValue(request, Map.class);
         guestMap.put("profilePhoto", profilePhotoUrl);

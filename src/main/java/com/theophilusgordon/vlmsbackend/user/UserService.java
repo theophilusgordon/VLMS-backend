@@ -6,7 +6,6 @@ import com.theophilusgordon.vlmsbackend.exception.NotFoundException;
 import com.theophilusgordon.vlmsbackend.token.Token;
 import com.theophilusgordon.vlmsbackend.token.TokenRepository;
 import com.theophilusgordon.vlmsbackend.token.TokenType;
-import com.theophilusgordon.vlmsbackend.utils.Encoder;
 import com.theophilusgordon.vlmsbackend.utils.S3Service;
 import com.theophilusgordon.vlmsbackend.utils.email.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -84,8 +83,8 @@ public class UserService {
     public String updateUserProfilePhoto(Principal principal, MultipartFile profilePhoto) {
         User user = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         s3Service.deleteImage(user.getProfilePhoto());
-        String encodedImage = Encoder.encodeImageToBase64(profilePhoto);
-        String profilePhotoUrl = s3Service.uploadEncodedImage(encodedImage);
+//        String encodedImage = Encoder.encodeImageToBase64(profilePhoto);
+        String profilePhotoUrl = s3Service.uploadImage(profilePhoto);
         user.setProfilePhoto(profilePhotoUrl);
         userRepository.save(user);
         return profilePhotoUrl;
