@@ -26,7 +26,7 @@ public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    private static final String S3_URL = "s3://vlms-storage/dev/";
+    private static final String S3_URL = "https://vlms-storage.s3.amazonaws.com";
 
     public String uploadImage(MultipartFile profilePhoto) {
 
@@ -45,10 +45,11 @@ public class S3Service {
 
 
     public void deleteImage(String imageUrl) {
-        if (!StringUtils.hasText(imageUrl) || !imageUrl.contains(S3_URL)) {
+        if (!imageUrl.contains(S3_URL)) {
             return;
         }
-        String key = imageUrl.substring(S3_URL.length());
-        s3Client.deleteObject(bucketName, key);
+        String fileName = imageUrl.substring(S3_URL.length());
+        System.out.println("::::::::FIle Name::::::::::" + fileName);
+        s3Client.deleteObject(bucketName, fileName);
     }
 }
