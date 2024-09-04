@@ -6,9 +6,7 @@ import com.theophilusgordon.vlmsbackend.constants.ExceptionConstants;
 import com.theophilusgordon.vlmsbackend.exception.UploadFailException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +19,6 @@ import java.util.UUID;
 public class S3Service {
 
     private final AmazonS3 s3Client;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
